@@ -42,12 +42,14 @@ class AwsUtils(): #namespace
     # TODO: Tom needs to test this!
     @staticmethod
     def Update(zipfilename):
+
         abspath = os.path.abspath(zipfilename)
         contents = open(abspath, 'rb').read()
 
-        CLIENT.update_function_code(
+        resp = CLIENT.update_function_code(
             FunctionName="ComicSlider",
             ZipFile=contents
         )
 
+        print(resp)
         return
