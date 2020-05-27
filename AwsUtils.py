@@ -28,6 +28,13 @@ class AwsUtils(): #namespace
     )
 
     @staticmethod  # Always there, without creating the object instance
-    def Remove(functionName):
+    def Delete(functionName):
+        # response = client.delete_function(
+        #     FunctionName='string',
+        #     Qualifier='string'
+        # )
+        CLIENT.delete_function(
+            FunctionName="ComicSlider"
+        )
         return
         #look for client.remove
