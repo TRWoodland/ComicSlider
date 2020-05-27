@@ -39,6 +39,7 @@ class AwsUtils(): #namespace
         return
         #look for client.remove
 
+    # TODO: Tom needs to test this!
     @staticmethod
     def Update(zipfilename):
         abspath = os.path.abspath(zipfilename)
