@@ -38,3 +38,15 @@ class AwsUtils(): #namespace
         )
         return
         #look for client.remove
+
+    @staticmethod
+    def Update(zipfilename):
+        abspath = os.path.abspath(zipfilename)
+        contents = open(abspath, 'rb').read()
+
+        CLIENT.update_function_code(
+            FunctionName="ComicSlider",
+            ZipFile=contents
+        )
+
+        return
