@@ -44,7 +44,7 @@ def lambda_handler(event, context):
     # Check/Validate Input(The HTTP Request)
     try:
         # Determine Input contains body-json (API Gateway will pass form-data within this)
-        if not hasattr(event, 'body-json'):
+        if not 'body-json' in event:
             raise Exception("Missing key:body-json")
 
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
