@@ -123,7 +123,7 @@ def ConvertComic(file, COMICEXT):
         print('Good decompress')
     #Trasnverse tempfolder, move files, remove subfolders
     CleanFolder(TEMPDIR, file, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTPUTDIR)
-    if not ProcessImages(TEMPDIR): #Check dimensions, portrait # returns W&H
+    if not ProcessImages(TEMPDIR, IMAGEEXT): #Check dimensions, portrait # returns W&H
         print('Process Images Failed')
         exit()
 

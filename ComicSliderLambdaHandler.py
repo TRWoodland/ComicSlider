@@ -112,9 +112,44 @@ def lambda_handler(event, context):
         #TODO: @JOHN if processImages fails/returns false, what exception should be raised?
         # How would it fail?
 
+        # Get dimensions of first image
+        width, height = FirstImageDimensions(TEMPDIR)  # in inches
 
-    #TODO: Not sure where it'd go, but need to check for If "XmlInfo.xml"
-    # does not exist, check for "{Extra} XmlInfo.xml" or next .xml file
+        # Make presentation
+        prs = MakePresentation(width, height)
+
+        # Check XML exists
+        XmlDict = {}
+        if os.path.isfile(os.path.join(temp_dir, 'ComicInfo.xml')):  # If ComicInfo exists
+            XmlDict = XmlReader(os.path.join(temp_dir, 'ComicInfo.xml'))
+        else:
+            if os.path.isfile(os.path.join(temp_dir, '{Extra} ComicInfo.xml')):
+                XmlDict = XmlReader(os.path.join(temp_dir, '{Extra} ComicInfo.xml'))
+
+        # Seperate Summary
+
+        SummaryDict = {}
+        if 'Summary' in XmlDict:
+            SummaryDict['Summary'] = XmlDict['Summary']
+            del XmlDict['Summary']
+
+        # Make list of filenames
+        pageList = []
+        for page in next(os.walk(temp_dir))[2]:
+            FName, FExt = os.path.splitext(page)
+            if FExt == '.jpg':
+                pageList.append(page)
+
+        # BUILD COMIC
+        for page in pageList:  # iterate through the pages
+            prs = AddSlide(prs, (os.path.join(temp_dir, page)))  # make page
+
+            if page == pageList[0]:  # if current page is the cover
+                if len(XmlDict) > 1:  # if something in XmlDict
+                    prs = AddXmlSlide(prs, XmlDict)  # Create Main Metadata page
+                if 'Summary' in SummaryDict:  # If Summary dict exists
+                    prs = AddXmlSlide(prs, SummaryDict)  # Create Summary page
+        return prs
 
     except Exception as e:
         raise InternalServerError(str(e))
