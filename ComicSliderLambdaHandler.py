@@ -28,8 +28,8 @@ def lambda_handler(event, context):
 
 
         # Check we have plenty of space in the temp directory
-        total, used, free = shutil.disk_usage(TEMPDIR) #in bytes
-        if free < 419,430,400: # bytes // (1024 * 1024) # converts to megabytes
+        total, used, free = shutil.disk_usage(temp_dir) #in bytes
+        if free < 419430400: # bytes // (1024 * 1024) # converts to megabytes
             raise Exception('Not enough space to continue')
 
 
