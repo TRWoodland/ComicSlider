@@ -62,3 +62,6 @@ def TempToBucket(file, filename, targetbucket): #"comicslidertemp"
 
     s3.meta.client.upload_file(file, targetbucket, filename, Callback=print_progress)
 
+def download(filename):
+    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename=filename)
