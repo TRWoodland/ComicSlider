@@ -5,11 +5,6 @@ from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServe
 from Utils import CheckArchive, IsComic, DecompressToTemp
 
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
-TEMPDIR = "/tmp"
-
-
-
-
 
 def lambda_handler(event, context):
     file_name = None
