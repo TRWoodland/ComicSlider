@@ -1,4 +1,4 @@
-from AwsStuff.AwsUtils import AwsLambdaPot
+from AwsStuff.AwsLambdaClient import AwsLambdaPot
 import argparse
 
 # The files to be bundled together and sent up to Amazon
