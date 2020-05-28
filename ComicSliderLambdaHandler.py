@@ -59,6 +59,7 @@ def lambda_handler(event, context):
         for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
             shutil.rmtree(folder)
 
+
         # Save file into Temp
 
 
