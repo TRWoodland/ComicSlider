@@ -207,10 +207,6 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
                 os.unlink(os.path.join(Foldername, Filename)) #delete file
                 continue
 
-            FName, FExt = os.path.splitext(Filename)  # Split filename and ext
-            if FExt in EXAMINERLIST:
-                Examiner('Comic: ' + ComicFileName, Filename) # Any bonus extras found get logged
-
             if FExt not in ALLOWEDEXT:
                 Logger(ComicFileName + " Deleting file because wrong extension: " + os.path.join(Foldername, Filename), OUTPUTDIR)
                 print('Deleting: ' + os.path.join(Foldername, Filename))

@@ -3,10 +3,13 @@ from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
-from Utils import CheckArchive, IsComic, DecompressToTemp
+from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop
 import shutil #for free space
 
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
+IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
+OTHEREXT = ['.xml']
+ALLOWEDEXT = IMAGEEXT + OTHEREXT
 
 def lambda_handler(event, context):
     file_name = None
@@ -41,17 +44,12 @@ def lambda_handler(event, context):
     # Check/Validate Input(The HTTP Request)
     try:
         # Determine Input contains body-json (API Gateway will pass form-data within this)
-        if not 'body-json' in event:
+        if not hasattr(event, 'body-json'):
             raise Exception("Missing key:body-json")
 
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
 
-        # temporally returning - to help with debugging!!
-        return {
-            'statusCode': 200,
-            'body': form_data
-        }
 
         # Assign values
         file_name       = event['file_name']
@@ -85,11 +83,13 @@ def lambda_handler(event, context):
 
     # Decompress and clean
     try:
-        if not DecompressToTemp(file_name, temp_dir):
+        if not DecompressToTemp(os.path.join(temp_dir, file_name), temp_dir): #File, and folder
             raise Exception('Failed to decompress into Temp directory')
 
 
         # TODO fill with remaining clean functions
+
+    CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
 
     except Exception as e:
         raise InternalServerError(str(e))
