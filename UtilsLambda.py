@@ -187,8 +187,6 @@ def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
                     shutil.move(os.path.join(Foldername, Filename),
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
 
-    FilesInComic = os.listdir(TEMPDIR)
-    #Counts how many Xml files
-    XmlCheck(TEMPDIR, Filename, OUTPUTDIR)
+
 
 

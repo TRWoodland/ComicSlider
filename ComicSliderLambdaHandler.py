@@ -162,7 +162,7 @@ def lambda_handler(event, context):
     try:
         # write file to S3             source, bucket, target
         s3.meta.client.upload_file(file_name, "comicslidertemp", file_name, Callback=print_progress)
-
+        bucketUrl = create_presigned_url("comicslidertemp", file_name, 3600)
 
         # TODO fill with remaining copy/link functions
 
