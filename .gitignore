@@ -1,2 +1,7 @@
-AwsStuff/credentials
-
+AwsStuff\
+.idea\
+.mypy_cache\
+_pycache_\
+Comics\
+ProcessedComics\
+venv\
