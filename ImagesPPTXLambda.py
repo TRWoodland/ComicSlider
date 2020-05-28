@@ -1,15 +1,10 @@
-from PIL import Image
-from Utils import FindNewFilename, DoesNewFileExist, NewFilePath
+from Utils import FindNewFilename, NewFilePath
 
 import os
-import time
 from PIL import Image
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RGBColor, ColorFormat
-
-#from pptx.enum.dml import MSO_COLOR_TYPE # MSO_THEME_COLOR
-#import codecs
+from pptx.dml.color import RGBColor,
 
 #1px =~ 9525EMU
 

@@ -3,9 +3,9 @@ from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
-from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop, ProcessImages,
-from ImagesPPTXLambda import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
-    MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX, ProcessImages
+from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder
+from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
+    SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
 
@@ -82,7 +82,7 @@ def lambda_handler(event, context):
 
 
         # Save file into Temp
-
+        # TODO please could new file in temp be stored as file_name
 
         # Check file is a archive
         if not CheckArchive(os.path.join(temp_dir, file_name)):
@@ -101,7 +101,6 @@ def lambda_handler(event, context):
         if not DecompressToTemp(os.path.join(temp_dir, file_name), temp_dir): #File, and folder
             raise Exception('Failed to decompress into Temp directory')
 
-
         # TODO fill with remaining clean functions
 
         CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
@@ -113,7 +112,7 @@ def lambda_handler(event, context):
         # How would it fail?
 
         # Get dimensions of first image
-        width, height = FirstImageDimensions(TEMPDIR)  # in inches
+        width, height = FirstImageDimensions(temp_dir)  # in inches
 
         # Make presentation
         prs = MakePresentation(width, height)
@@ -152,7 +151,7 @@ def lambda_handler(event, context):
         return prs
 
         # TODO make sure the original filename in the variable below
-        newFile = SavePPTX(prs, filename, temp_dir)
+        newFile = SavePPTX(prs, file_name, temp_dir)
         # TODO PPTX File is built, path and file stored as newFile
     except Exception as e:
         raise InternalServerError(str(e))
@@ -161,8 +160,8 @@ def lambda_handler(event, context):
 
     # Copy to S3 and return link
     try:
-        # write file to S3
-        # s3.meta.client.upload_file(fileToCopy, "comicslidertemp", "LICENSE.txt", Callback=print_progress)
+        # write file to S3             source, bucket, target
+        s3.meta.client.upload_file(file_name, "comicslidertemp", file_name, Callback=print_progress)
 
 
         # TODO fill with remaining copy/link functions
@@ -173,9 +172,6 @@ def lambda_handler(event, context):
 
     except Exception as e:
         raise InternalServerError(str(e))
-
-
-
 
     return {
         'statusCode': 200,
