@@ -61,3 +61,4 @@ def TempToBucket(file, filename, targetbucket): #"comicslidertemp"
                                                                 # when whole func is run
 
     s3.meta.client.upload_file(file, targetbucket, filename, Callback=print_progress)
+
