@@ -2,7 +2,7 @@ from AwsStuff.AwsLambdaPot import AwsLambdaPot
 import argparse
 
 # The files to be bundled together and sent up to Amazon
-file_list = ["ComicSliderLambdaHandler.py", "ComicSliderExceptions.py", "ImagesPPTX.py", "Utils.py"]
+file_list = ["ComicSliderLambdaHandler.py", "ComicSliderExceptions.py", "ImagesPPTX.py", "UtilsLambda.py"]
 pot = AwsLambdaPot("ComicSlider", file_list)
 
 

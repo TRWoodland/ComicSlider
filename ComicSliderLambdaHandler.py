@@ -5,6 +5,7 @@ import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop
 import shutil #for free space
+import email.parser
 
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
 IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
@@ -50,10 +51,17 @@ def lambda_handler(event, context):
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
 
+        msg = email.parser.BytesParser().parsebytes(form_data)
+
+        #print({
+         #   part.get_param('name', header='content-disposition'): part.get_payload(decode=True)
+         #   for part in msg.get_payload()
+        #})
+
         ############ Temparally Returning early ##########
         return {
             'statusCode': 200,
-            'body': form_data
+            'body': json.dumps(msg)
         }
 
         # Assign values
