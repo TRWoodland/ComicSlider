@@ -145,26 +145,14 @@ def Logger(String, OUTPUTDIR):
     LoggerFile = open((os.path.join(OUTPUTDIR, 'log.txt')), 'a')
     LoggerFile.write(String + " " + str(today.strftime("%d %B %Y")) + "\n")
     LoggerFile.close()
-def Examiner(String, OUTPUTDIR):
-    today = date.today()
-    LoggerFile = open((os.path.join(OUTPUTDIR, 'examiner.txt')), 'a')
-    LoggerFile.write(String + " " + str(today.strftime("%d %B %Y")) + "\n")
-    LoggerFile.close()
+
 
 
 def MoveFolders(Source, Destination):
     for entry in os.scandir(Source):
         shutil.move(entry.path, Destination)
 
-#Counts XML files in TEMPDIR, logs it
-def XmlCheck(TEMPDIR, Filename, OUTPUTDIR):
-    XmlCheck = []
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(".xml"):
-            XmlCheck.append(file)
-    if len(XmlCheck) > 1: #If there is more than one Xml file
-        Examiner('More than one Xml in ' + Filename, OUTPUTDIR)#Store XmlCheck list and current directory structure
-    #Remove crap
+
 
 #If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
 def EmptyFolderDrop(TEMPDIR):
@@ -182,8 +170,6 @@ def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
         for Filename in Filenames:
             FName, FExt = os.path.splitext(Filename)  # Split filename and ext
             if FExt not in ALLOWEDEXT:
-                Logger(ComicFileName + " Deleting file because wrong extension: " + os.path.join(Foldername, Filename), OUTPUTDIR)
-                print('Deleting: ' + os.path.join(Foldername, Filename))
                 os.unlink(os.path.join(Foldername, Filename))  # deleting file because wrong extension
 
             elif Foldername != TEMPDIR: # For subfolders of TEMPDIR

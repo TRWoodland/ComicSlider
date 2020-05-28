@@ -4,7 +4,7 @@ from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop, ProcessImages,
-from ImagesPPTX import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
+from ImagesPPTXLambda import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
     MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
@@ -151,6 +151,9 @@ def lambda_handler(event, context):
                     prs = AddXmlSlide(prs, SummaryDict)  # Create Summary page
         return prs
 
+        # TODO make sure the original filename in the variable below
+        newFile = SavePPTX(prs, filename, temp_dir)
+        # TODO PPTX File is built, path and file stored as newFile
     except Exception as e:
         raise InternalServerError(str(e))
 
