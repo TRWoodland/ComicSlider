@@ -50,6 +50,11 @@ def lambda_handler(event, context):
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
 
+        ############ Temparally Returning early ##########
+        return {
+            'statusCode': 200,
+            'body': form_data
+        }
 
         # Assign values
         file_name       = event['file_name']
@@ -89,7 +94,7 @@ def lambda_handler(event, context):
 
         # TODO fill with remaining clean functions
 
-    CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
+        CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
 
     except Exception as e:
         raise InternalServerError(str(e))
