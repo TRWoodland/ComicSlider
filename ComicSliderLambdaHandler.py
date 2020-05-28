@@ -1,4 +1,5 @@
 import sys, os, tempfile, time
+from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
@@ -14,6 +15,9 @@ def lambda_handler(event, context):
     temp_dir = tempfile.gettempdir()
 
     try:
+        # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
+        form_data = urlsafe_b64decode(event['body-json'])
+
         # Test we can write into temp directory
         if not os.access(temp_dir, os.W_OK):
             raise Exception('Unable to get write access to Temp directory')
