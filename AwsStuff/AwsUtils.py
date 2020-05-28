@@ -18,6 +18,7 @@ class AwsLambdaPot:
     def __init__(self, function_name, file_list):
         self.function_name = function_name
         self.file_list = file_list
+        return
 
     @staticmethod
     def make_zip(zipfilename, file_list):
@@ -47,7 +48,10 @@ class AwsLambdaPot:
             Code={
                'ZipFile': contents
             }
-    )
+        )
+        os.remove(zipfile_abspath)
+        return
+
 
     def delete(self):
         CLIENT.delete_function(
@@ -66,6 +70,7 @@ class AwsLambdaPot:
         )
 
         print(resp)
+        os.remove(zipfile_abspath)
         return
 
 #function to copy temp file to bucket
