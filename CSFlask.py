@@ -1,19 +1,25 @@
 #pip install Flask
 from flask import Flask, render_template, url_for, redirect, request
 import os
+from werkzeug.utils import secure_filename
+import tempfile
+
+#Generate TEMPDIR. FOLDER IS EMPTIED WHEN PROCESS COMPLETED!
+if not os.path.exists(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')): #if folder doesn't exist
+    os.mkdir(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')) #make it
+TEMPDIR = os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['MAX_CONTENT_LENGTH'] = 150 * 1024 * 1024 #max file size 150mb
-UPLOAD_FOLDER = os.getcwd() # TODO: CHANGE TO TEMPDIR
+UPLOAD_FOLDER = TEMPDIR
 print(os.getcwd())
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'} #TODO: Change when initial tests are done
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+COMICEXT = ['cbz', 'cbr', 'rar', 'zip'] #no periods like other .pys because I didn't write the rest
+app.config['UPLOAD_FOLDER'] = TEMPDIR #Tried changing all refs to variable to TEMPDIR, didn't like it.
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in COMICEXT
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
