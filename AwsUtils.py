@@ -1,52 +1,67 @@
 import boto3
 import json
 import os
+from zipfile import ZipFile
 
-# DEFAULTS = {'role': open('aws_role.txt').read().strip(),
-#             'environment': json.load(open('env_vars.txt'))}
 CLIENT = boto3.client('lambda')
-# arn:aws:iam::080763178885:user/TomWoodland
-# arn:aws:iam::0225887334136:role/lambda_exec_role
-class AwsUtils(): #namespace
 
-    @staticmethod  # Always there, without creating the object instance
-    def Create(zipfilename): # zipfilename is ComicSlider.zip
-        abspath = os.path.abspath(zipfilename)
-        contents = open(abspath, 'rb').read()
 
-        # Offending code
+class AwsLambdaPot:
+
+    # Default Values
+    runtime = "python3.8"
+    role = 'arn:aws:iam::080763178885:role/lambda_full'
+    handler = "ComicSliderLambdaHandler.lambda_handler"
+    function_name = None
+    file_list = None
+
+    def __init__(self, function_name, file_list):
+        self.function_name = function_name
+        self.file_list = file_list
+
+    @staticmethod
+    def make_zip(self, zipfilename, file_list):
+        # create a ZipFile object
+        zip_obj = ZipFile(zipfilename, 'w')
+
+        # Add multiple files to the zip
+        for file in file_list:
+            zip_obj.write(file)
+
+        # close the Zip File
+        zip_obj.close()
+
+        return os.path.abspath(zipfilename)
+
+    def create_new(self):
+
+        zipfile_abspath = AwsLambdaPot.makeZip(self.function_name + '.zip', self.file_list)
+        contents = open(zipfile_abspath, 'rb').read()
+
         CLIENT.create_function(
-            FunctionName="ComicSlider",
-            Runtime="python3.8",
-            Role='arn:aws:iam::080763178885:role/lambda_full',
-            Handler="test.MainHandler",
+            FunctionName=self.function_name,
+            Runtime=self.runtime,
+            Role=self.role,
+            Handler=self.handler,
             #Environment=DEFAULTS['environment'],
             Code={
                'ZipFile': contents
             }
     )
 
-    @staticmethod  # Always there, without creating the object instance
-    def Delete(functionName):
-        # response = client.delete_function(
-        #     FunctionName='string',
-        #     Qualifier='string'
-        # )
+    def delete(self):
         CLIENT.delete_function(
-            FunctionName="ComicSlider"
+            FunctionName=self.function_name
         )
         return
-        #look for client.remove
 
-    # TODO: Tom needs to test this!
-    @staticmethod
-    def Update(zipfilename):
+    def update(self):
 
-        abspath = os.path.abspath(zipfilename)
-        contents = open(abspath, 'rb').read()
+        zipfile_abspath = AwsLambdaPot.makeZip(self.function_name + '.zip', self.file_list)
+        contents = open(zipfile_abspath, 'rb').read()
 
         resp = CLIENT.update_function_code(
-            FunctionName="ComicSlider",
+            FunctionName=self.function_name,
             ZipFile=contents
         )
 
