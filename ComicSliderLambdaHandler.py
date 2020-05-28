@@ -18,7 +18,7 @@ s3 = boto3.resource('s3')
 
 def lambda_handler(event, context):
     file_name = None
-    file_contents = None
+    file_bytes = None
     link = None
     temp_dir = tempfile.gettempdir()
 
@@ -56,33 +56,27 @@ def lambda_handler(event, context):
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
         form_hdr = event['params']['header']['Content-Type']
+        # Build a compliant SMIME message
         msg_bytes = "Content-Type: ".encode("utf8") + form_hdr.encode("utf8") + "\n".encode("utf8") + form_data
 
-        f = open(temp_dir + "msg.bin", "wb")
-        f.write(msg_bytes)
-        f.close()
-
-        s3.meta.client.upload_file(temp_dir + "msg.bin", "comicslidertemp", "msg.bin")
-
-        f = open(temp_dir + "msg.bin", "rb")
-
-        list = []
-        msg = email.message_from_binary_file(f)
+        # Run through Multipart message sections
+        msg = email.message_from_bytes(msg_bytes)
         if msg.is_multipart():
             for part in msg.walk():
-                list.append(part.get_boundary())
+                payload = part.get_payload(decode=True)
+                if payload is not None:
+                    file_bytes = payload
+                    file_name = part.get_filename()
         else:
-           list.append('msg is not multi part')
+           raise Exception("Unable to open Multipart Form")
 
-        ############ Temparally Returning early ##########
-        return {
-            'statusCode': 200,
-            'body': json.dumps(list)
-        }
+        assert file_name is not None
+        assert file_bytes is not None
 
-        # Assign values
-        file_name       = event['file_name']
-        file_contents   = event['file_contents']
+        # Write the incoming file onto the filesystem
+        f = open(os.path.join(temp_dir, file_name), "wb")
+        f.write(file_bytes )
+        f.close()
 
         # Check file_name has one of the accepted extensions
         if not IsComic(file_name, COMICEXT):
