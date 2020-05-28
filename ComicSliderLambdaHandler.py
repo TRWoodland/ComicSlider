@@ -3,7 +3,9 @@ from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
-from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop
+from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, EmptyFolderDrop, ProcessImages,
+from ImagesPPTX import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
+    MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
 
@@ -103,6 +105,16 @@ def lambda_handler(event, context):
         # TODO fill with remaining clean functions
 
         CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
+
+        if not ProcessImages(temp_dir, IMAGEEXT):  # Check dimensions, portrait # returns W&H
+            print('Process Images Failed')
+            exit()
+        #TODO: @JOHN if processImages fails/returns false, what exception should be raised?
+        # How would it fail?
+
+
+    #TODO: Not sure where it'd go, but need to check for If "XmlInfo.xml"
+    # does not exist, check for "{Extra} XmlInfo.xml" or next .xml file
 
     except Exception as e:
         raise InternalServerError(str(e))

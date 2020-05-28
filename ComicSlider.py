@@ -9,7 +9,7 @@ import shutil
 from Utils import CheckArchive, DecompressToTemp, get_size, IsComic, CleanFolder, \
     Logger, Examiner, MoveFolders, XmlReader
 from ImagesPPTX import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
-    MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX
+    MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX, ProcessImages
 
 #AWS Test
 if platform == "linux": #if platform is linux
@@ -96,24 +96,7 @@ def NewFolder(Foldername, SOURCEDIR, OUTPUTDIR):
         os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR))) #Create folder
         print(Foldername + ' created in OUTPUTDIR!')
 
-#Ensure .jpgs & rotate landscapes
-def ProcessImages(TEMPDIR):
-    for file in next(os.walk(TEMPDIR))[2]: #files in TEMPDIR
-        FName, FExt = os.path.splitext(file)
-        if FExt in IMAGEEXT: #if file is image
-            if not FExt.lower() == '.jpg': #if file is not jpg
-                ConvertToJpg(TEMPDIR, file)
 
-            #Check orientation
-            RotateToPortrait(os.path.join(TEMPDIR, file))
-            #allPageDimensions.update(GetImageDimensionsInches(os.path.join(TEMPDIR, file))) #should add new k&v to dict
-            #width, height = GetImageDimensionsInches((os.path.join(TEMPDIR, file)))
-            # if width > maxwidth:
-            #     maxwidth = width
-            # if height > maxheight:
-            #     maxheight = height
-    #print("maxheight " + str(maxheight) + "maxwidth " + str(maxwidth))
-    return True
 
 #FILE
 def ConvertComic(file, COMICEXT):

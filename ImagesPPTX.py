@@ -13,6 +13,25 @@ from pptx.dml.color import RGBColor, ColorFormat
 
 #1px =~ 9525EMU
 
+#Ensure .jpgs & rotate landscapes
+def ProcessImages(TEMPDIR, image_ext):
+    for file in next(os.walk(TEMPDIR))[2]: #files in TEMPDIR
+        FName, FExt = os.path.splitext(file)
+        if FExt in image_ext: #if file is image
+            if not FExt.lower() == '.jpg': #if file is not jpg
+                ConvertToJpg(TEMPDIR, file)
+
+            #Check orientation
+            RotateToPortrait(os.path.join(TEMPDIR, file))
+            #allPageDimensions.update(GetImageDimensionsInches(os.path.join(TEMPDIR, file))) #should add new k&v to dict
+            #width, height = GetImageDimensionsInches((os.path.join(TEMPDIR, file)))
+            # if width > maxwidth:
+            #     maxwidth = width
+            # if height > maxheight:
+            #     maxheight = height
+    #print("maxheight " + str(maxheight) + "maxwidth " + str(maxwidth))
+    return True
+
 #Convert images to jpg
 def ConvertToJpg(Destination, File): # remember to pass TEMPDIR + FILE
     comicPage = Image.open(File)
