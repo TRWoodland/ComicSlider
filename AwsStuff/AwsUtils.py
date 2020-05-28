@@ -20,7 +20,7 @@ class AwsLambdaPot:
         self.file_list = file_list
 
     @staticmethod
-    def make_zip(self, zipfilename, file_list):
+    def make_zip(zipfilename, file_list):
         # create a ZipFile object
         zip_obj = ZipFile(zipfilename, 'w')
 
