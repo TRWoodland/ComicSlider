@@ -20,7 +20,7 @@ class AwsLambdaPot:
         self.file_list = file_list
 
     @staticmethod
-    def make_zip(zipfilename, file_list):
+    def make_zip(self, zipfilename, file_list):
         # create a ZipFile object
         zip_obj = ZipFile(zipfilename, 'w')
 
@@ -35,7 +35,7 @@ class AwsLambdaPot:
 
     def create_new(self):
 
-        zipfile_abspath = AwsLambdaPot.make_zip(self.function_name + '.zip', self.file_list)
+        zipfile_abspath = AwsLambdaPot.makeZip(self.function_name + '.zip', self.file_list)
         contents = open(zipfile_abspath, 'rb').read()
 
         CLIENT.create_function(
@@ -57,7 +57,7 @@ class AwsLambdaPot:
 
     def update(self):
 
-        zipfile_abspath = AwsLambdaPot.make_zip(self.function_name + '.zip', self.file_list)
+        zipfile_abspath = AwsLambdaPot.makeZip(self.function_name + '.zip', self.file_list)
         contents = open(zipfile_abspath, 'rb').read()
 
         resp = CLIENT.update_function_code(
