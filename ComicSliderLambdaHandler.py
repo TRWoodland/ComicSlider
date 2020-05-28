@@ -56,11 +56,18 @@ def lambda_handler(event, context):
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
         form_hdr = event['params']['header']['Content-Type']
-        msg_bytes = form_hdr.encode("utf8") + "\n".encode("utf8") + form_data
+        msg_bytes = "Content-Type: ".encode("utf8") + form_hdr.encode("utf8") + "\n".encode("utf8") + form_data
+
+        f = open(temp_dir + "msg.bin", "wb")
+        f.write(msg_bytes)
+        f.close()
+
+        s3.meta.client.upload_file(temp_dir + "msg.bin", "comicslidertemp", "msg.bin")
+
+        f = open(temp_dir + "msg.bin", "rb")
 
         list = []
-        list.append(form_hdr)
-        msg = email.message_from_bytes(msg_bytes)
+        msg = email.message_from_binary_file(f)
         if msg.is_multipart():
             for part in msg.walk():
                 list.append(part.get_boundary())
