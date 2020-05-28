@@ -57,11 +57,18 @@ def lambda_handler(event, context):
         if not IsComic(file_name, COMICEXT):
             raise Exception('Bad Comic Extension')
 
+        # Check temp_dir is empty.
+        for file in next(os.walk(temp_dir))[2]: # files in temp_dir
+            os.remove(file)
+        for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
+            shutil.rmtree(folder)
+
+
         # Save file into Temp
 
 
         # Check file is a archive
-        if not CheckArchive(file_name):
+        if not CheckArchive(os.path.join(temp_dir, file_name)):
             raise Exception('File is not Archive')
 
         # TODO fill with remaining checking functions
