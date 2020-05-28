@@ -14,6 +14,8 @@ IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
 OTHEREXT = ['.xml']
 ALLOWEDEXT = IMAGEEXT + OTHEREXT
 
+s3 = boto3.resource('s3')
+
 def lambda_handler(event, context):
     file_name = None
     file_contents = None
@@ -49,21 +51,26 @@ def lambda_handler(event, context):
         # Determine Input contains body-json (API Gateway will pass form-data within this)
         if not 'body-json' in event:
             raise Exception("Missing key:body-json")
-
+        if not 'params' in event:
+            raise Exception("Missing key:params")
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
+        form_hdr = urlsafe_b64decode(event['params']['header']['Content-Type'])
 
-        msg = email.parser.BytesParser().parsebytes(form_data)
 
-        #print({
-         #   part.get_param('name', header='content-disposition'): part.get_payload(decode=True)
-         #   for part in msg.get_payload()
-        #})
+        #list = []
+        #list.append(form_hdr.decode('utf8'))
+        #msg = email.message_from_bytes(form_hdr+form_data)
+        #if msg.is_multipart():
+        #    for part in msg.walk():
+        #        list.append(part.get_boundary())
+        #else:
+        #   list.append('msg is not multi part')
 
         ############ Temparally Returning early ##########
         return {
             'statusCode': 200,
-            'body': json.dumps(msg)
+            'body': json.dumps(event)
         }
 
         # Assign values
