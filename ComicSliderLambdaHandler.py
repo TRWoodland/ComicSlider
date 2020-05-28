@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     try:
         # Test we can write into temp directory
         if not os.access(TEMPDIR, os.W_OK):
-            raise Exception('Unable to get write acces to Temp directory')
+            raise Exception('Unable to get write access to Temp directory')
 
         # Check we have plenty of space in the temp directory
 
