@@ -3,6 +3,7 @@ from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
 from Utils import CheckArchive, IsComic, DecompressToTemp
+import shutil #for free space
 
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
 TEMPDIR = "/tmp"
@@ -18,6 +19,11 @@ def lambda_handler(event, context):
             raise Exception('Unable to get write access to Temp directory')
 
         # Check we have plenty of space in the temp directory
+        total, used, free = shutil.disk_usage(TEMPDIR) #in bytes
+        if free < 419,430,400: # bytes // (1024 * 1024) # converts to megabytes
+            raise Exception('Not enough space to continue')
+
+
 
     except Exception as e:
         raise InternalServerError(str(e))
@@ -39,6 +45,7 @@ def lambda_handler(event, context):
             raise Exception('Bad Comic Extension')
 
         # Save file into Temp
+
 
         # Check file is a archive
         if not CheckArchive(file_name):
