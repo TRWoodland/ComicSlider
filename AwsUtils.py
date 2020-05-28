@@ -80,7 +80,7 @@ def TempToBucket(file, filename, targetbucket): #"comicslidertemp"
 
 
 #Generate URL to Bucket file
-def create_presigned_url(bucket_name, object_name, expiration=3600):
+def create_presigned_url(bucket_name, object_name, expiration=86400): #86400 is 24 hours
     """Generate a presigned URL to share an S3 object
 
     :param bucket_name: string
@@ -102,3 +102,4 @@ def create_presigned_url(bucket_name, object_name, expiration=3600):
 
     # The response contains the presigned URL
     return response
+#TODO: try playing with flask redirect to just redirect to generated url. (have to rebuilt later atm)
