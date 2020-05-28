@@ -25,8 +25,10 @@ def lambda_handler(event, context):
     # Check/Validate Input(The HTTP Request)
     try:
         # Determine Input contains file
-        assert 'file_name'      in event
-        assert 'file_contents'  in event
+        if not hasattr(event, 'file_name'):
+            raise Exception("Missing key:file_name")
+        if not hasattr(event, 'file_contents'):
+            raise Exception("Missing key:file_contents")
 
         # Assign values
         file_name       = event['file_name']
