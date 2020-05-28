@@ -18,9 +18,6 @@ def lambda_handler(event, context):
     temp_dir = tempfile.gettempdir()
 
     try:
-        # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
-        form_data = urlsafe_b64decode(event['body-json'])
-
         # Test we can write into temp directory
         if not os.access(temp_dir, os.W_OK):
             raise Exception('Unable to get write access to Temp directory')
@@ -46,11 +43,13 @@ def lambda_handler(event, context):
 
     # Check/Validate Input(The HTTP Request)
     try:
-        # Determine Input contains file
-        if not hasattr(event, 'file_name'):
-            raise Exception("Missing key:file_name")
-        if not hasattr(event, 'file_contents'):
-            raise Exception("Missing key:file_contents")
+        # Determine Input contains body-json (API Gateway will pass form-data within this)
+        if not hasattr(event, 'body-json'):
+            raise Exception("Missing key:body-json")
+
+        # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
+        form_data = urlsafe_b64decode(event['body-json'])
+
 
         # Assign values
         file_name       = event['file_name']
