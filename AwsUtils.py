@@ -6,7 +6,6 @@ import os
 #             'environment': json.load(open('env_vars.txt'))}
 CLIENT = boto3.client('lambda')
 # arn:aws:iam::080763178885:user/TomWoodland
-#
 # arn:aws:iam::0225887334136:role/lambda_exec_role
 class AwsUtils(): #namespace
 
@@ -53,3 +52,16 @@ class AwsUtils(): #namespace
 
         print(resp)
         return
+
+#function to copy temp file to bucket
+def TempToBucket(file, filename, targetbucket): #"comicslidertemp"
+    s3 = boto3.resource('s3')
+    def print_progress(num_of_bytes_uploaded):
+        print(f"Written {num_of_bytes_uploaded} to S3 bucket.") #this doesn't seem to return anything in lambda
+                                                                # when whole func is run
+
+    s3.meta.client.upload_file(file, targetbucket, filename, Callback=print_progress)
+
+def download(filename):
+    uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_from_directory(directory=uploads, filename=filename)
