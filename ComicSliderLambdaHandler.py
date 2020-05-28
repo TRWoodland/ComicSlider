@@ -7,15 +7,29 @@ from Utils import CheckArchive, IsComic, DecompressToTemp
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
 TEMPDIR = "/tmp"
 
+
+
+
+
 def lambda_handler(event, context):
     file_name = None
     file_contents = None
     link = None
+    temp_dir = tempfile.gettempdir()
 
     try:
         # Test we can write into temp directory
-        if not os.access(TEMPDIR, os.W_OK):
+        if not os.access(temp_dir, os.W_OK):
             raise Exception('Unable to get write access to Temp directory')
+
+        # if temp folder doesn't exist
+        if not os.path.exists(os.path.join(temp_dir, 'ComicSliderTemp')):
+            os.mkdir(os.path.join(temp_dir, 'ComicSliderTemp'))  # make it
+
+        # Update to new Temp dir PAth
+        temp_dir = os.path.join(temp_dir, 'ComicSliderTemp')
+
+
 
         # Check we have plenty of space in the temp directory
 
