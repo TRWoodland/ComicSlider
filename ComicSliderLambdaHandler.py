@@ -4,8 +4,8 @@ from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder
-from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
-    SavePPTX, ProcessImages
+#from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
+#    SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
 
@@ -55,22 +55,22 @@ def lambda_handler(event, context):
             raise Exception("Missing key:params")
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
-        form_hdr = urlsafe_b64decode(event['params']['header']['Content-Type'])
+        form_hdr = event['params']['header']['Content-Type']
+        msg_bytes = form_hdr.encode("utf8") + "\n".encode("utf8") + form_data
 
-
-        #list = []
-        #list.append(form_hdr.decode('utf8'))
-        #msg = email.message_from_bytes(form_hdr+form_data)
-        #if msg.is_multipart():
-        #    for part in msg.walk():
-        #        list.append(part.get_boundary())
-        #else:
-        #   list.append('msg is not multi part')
+        list = []
+        list.append(form_hdr)
+        msg = email.message_from_bytes(msg_bytes)
+        if msg.is_multipart():
+            for part in msg.walk():
+                list.append(part.get_boundary())
+        else:
+           list.append('msg is not multi part')
 
         ############ Temparally Returning early ##########
         return {
             'statusCode': 200,
-            'body': json.dumps(event)
+            'body': json.dumps(list)
         }
 
         # Assign values

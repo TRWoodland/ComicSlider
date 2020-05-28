@@ -1,10 +1,9 @@
-from Utils import FindNewFilename, NewFilePath
-
+from UtilsLambda import FindNewFilename, NewFilePath
 import os
 from PIL import Image
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RGBColor,
+from pptx.dml.color import RGBColor
 
 #1px =~ 9525EMU
 
@@ -135,7 +134,7 @@ def AddXmlSlide(prs, XmlDict):
     return prs
 
 def SavePPTX(prs, filename, TEMPDIR):
-    newFile = NewFilePath(os.path.join(TEMPDIR, filename)
+    newFile = NewFilePath(os.path.join(TEMPDIR, filename))
     prs.save(newFile)
     print("New Comic Created: " + newFile)
     return newFile
