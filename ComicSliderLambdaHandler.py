@@ -17,11 +17,11 @@ def lambda_handler(event, context):
         if not os.access(temp_dir, os.W_OK):
             raise Exception('Unable to get write access to Temp directory')
 
-        # if temp folder doesn't exist
+        # if temp subdirectory doesn't exist
         if not os.path.exists(os.path.join(temp_dir, 'ComicSliderTemp')):
             os.mkdir(os.path.join(temp_dir, 'ComicSliderTemp'))  # make it
 
-        # Update to new Temp dir PAth
+        # Update to new temp dir to include sub-directory
         temp_dir = os.path.join(temp_dir, 'ComicSliderTemp')
 
 
