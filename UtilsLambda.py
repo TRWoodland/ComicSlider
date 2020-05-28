@@ -175,68 +175,29 @@ def EmptyFolderDrop(TEMPDIR):
             MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR) #Move everything in this folder to TEMPDIR
 
 def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
-    #
-    # if not type(TEMPDIR) is str:
-    #     print('TEMPDIR ' + type(TEMPDIR) + ' not string')
-    # if not type(ComicFileName) is str:
-    #     print('ComicFileName ' + type(ComicFileName) + ' not string')
-    # if not isinstance(SHITLIST, list):
-    #     print('SHITLIST ' + type(SHITLIST) + ' not list')
-    # if not isinstance(EXAMINERLIST, list):
-    #     print('EXAMINERLIST ' + type(EXAMINERLIST) + ' not list')
-    # if not isinstance(ALLOWEDEXT, list):
-    #     print('ALLOWEDEXT ' + type(ALLOWEDEXT) + ' not list')
-    # if not type(OUTPUTDIR) is str:
-    #     print('OUTPUTDIR ' + type(OUTPUTDIR) + ' not string')
-
-
-    #First checks first folder has something in it
-    #Move all files in folders to TEMPDIR
-    #Make sure files have different names
-    #New Filename means they're last in the order of everything
-    #Other filetypes get added to a text file and deleted
-    #Leaves empty folders for deletion later
-
     EmptyFolderDrop(TEMPDIR)
 
     for Foldername, Subfolders, Filenames in os.walk(TEMPDIR):
         #print('Current folder:' + Foldername)
         for Filename in Filenames:
-
-            if Filename in SHITLIST:
-                os.unlink(os.path.join(Foldername, Filename)) #delete file
-                continue
-
             FName, FExt = os.path.splitext(Filename)  # Split filename and ext
-            if FExt in EXAMINERLIST:
-                Examiner('Comic: ' + ComicFileName, Filename) # Any bonus extras found get logged
-
             if FExt not in ALLOWEDEXT:
                 Logger(ComicFileName + " Deleting file because wrong extension: " + os.path.join(Foldername, Filename), OUTPUTDIR)
                 print('Deleting: ' + os.path.join(Foldername, Filename))
                 os.unlink(os.path.join(Foldername, Filename))  # deleting file because wrong extension
+
             elif Foldername != TEMPDIR: # For subfolders of TEMPDIR
                 # New Filename:
+
                 NewFileName = """{Extra} """ + Filename  # Adding { } so that its the end of Alphanumeric & symbol order
 
-                #print(Foldername + ' not in TEMPDIR')
-
                 if os.path.isfile(os.path.join(TEMPDIR, NewFileName)):  # if file exists
-                    #print(NewFileName)
                     NewFileName = FindNewFilename(TEMPDIR, NewFileName)  # Function to find new file name
-                    # print(ComicFileName)
-                    # print(Filename)
-                    # print(NewFileName)
-                    Logger(ComicFileName + ' Old filename: ' + Filename + " New FileName: " + NewFileName,
-                           OUTPUTDIR)
+
                     shutil.move(os.path.join(Foldername, Filename),
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
                 else:
 
-                    # print(Foldername)
-                    # print(Filename)
-                    # print(TEMPDIR)
-                    # print(NewFileName)
                     shutil.move(os.path.join(Foldername, Filename),
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
 
