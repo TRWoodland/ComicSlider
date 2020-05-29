@@ -16,7 +16,9 @@ ALLOWEDEXT = IMAGEEXT + OTHEREXT
 
 s3 = boto3.resource('s3')
 
+
 def lambda_handler(event, context):
+    print("Loaded Modules - Remaining Execution Time: " + str(context.get_remaining_time_in_millis()))
     file_name = None
     file_bytes = None
     link = None
@@ -42,6 +44,8 @@ def lambda_handler(event, context):
     except Exception as e:
         raise InternalServerError(str(e))
 
+    print("Temp Dir Checked - Remaining Execution Time: " + str(context.get_remaining_time_in_millis()))
+
     # Check/Validate Input(The HTTP Request)
     try:
         # Determine Input contains body-json (API Gateway will pass form-data within this)
@@ -49,6 +53,7 @@ def lambda_handler(event, context):
             raise Exception("Missing key:body-json")
         if not 'params' in event:
             raise Exception("Missing key:params")
+
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
         form_data = urlsafe_b64decode(event['body-json'])
         form_hdr = event['params']['header']['Content-Type']
@@ -115,7 +120,7 @@ def lambda_handler(event, context):
         # If anything wrong with the users input response with BadRequestError Exception
         raise BadRequestError(str(e))
 
-
+    print("Checked Input is Archive - Remaining Execution Time: " + str(context.get_remaining_time_in_millis()))
 
     # Decompress and clean
     try:
@@ -132,7 +137,6 @@ def lambda_handler(event, context):
         width, height = FirstImageDimensions(temp_dir)  # in inches
 
         # Make presentation
-        print("Make presentation")
         prs = MakePresentation(width, height)
 
         # Check XML exists
@@ -162,7 +166,6 @@ def lambda_handler(event, context):
         print(*pageList)
 
         # BUILD COMIC
-        print("Build comic")
         for page in pageList:  # iterate through the pages
             prs = AddSlide(prs, (os.path.join(temp_dir, page)))  # make page
 
@@ -175,20 +178,18 @@ def lambda_handler(event, context):
         if prs is None:
             raise Exception('prs is none')
 
-        print("file_name is: " + file_name)
         newFile = SavePPTX(prs, file_name, temp_dir)
-        print("newFile is: " + newFile)
+
     except Exception as e:
         raise InternalServerError(str(e))
 
-
+    print("Built PPTX - Remaining Execution Time: " + str(context.get_remaining_time_in_millis()))
 
     # Copy to S3 and return link
     try:
         # write file to S3             source, bucket, target
-        print("write file to S3")
         s3.meta.client.upload_file(newFile, "comicslidertemp", os.path.split(newFile)[1]) #strips path from newFile
-        print("generate url to bucket")
+
         bucketUrl = create_presigned_url("comicslidertemp", os.path.split(newFile)[1], 3600)
 
         # TODO fill with remaining copy/link functions
@@ -202,6 +203,8 @@ def lambda_handler(event, context):
 
     except Exception as e:
         raise InternalServerError(str(e))
+
+    print("Saved to S3 - Remaining Execution Time: " + str(context.get_remaining_time_in_millis()))
 
     # Default is to response with a HTTP 303 SeeOther, which redirects the client to the comic file
     return {"location": bucketUrl}
