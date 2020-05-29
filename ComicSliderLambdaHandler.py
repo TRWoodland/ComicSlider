@@ -183,7 +183,8 @@ def lambda_handler(event, context):
 
 
         # Make sure link has been assigned
-        assert link is not None
+        if link is None:
+            raise Exception('link is none')
 
     except Exception as e:
         raise InternalServerError(str(e))
