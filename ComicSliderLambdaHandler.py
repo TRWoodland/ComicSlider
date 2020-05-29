@@ -4,8 +4,8 @@ from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder
-#from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
-#    SavePPTX, ProcessImages
+from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
+    SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
 
@@ -83,10 +83,17 @@ def lambda_handler(event, context):
             raise Exception('Bad Comic Extension')
 
         # Check temp_dir is empty.
-        #for file in next(os.walk(temp_dir))[2]: # files in temp_dir
-        #   os.remove(file)
-        #for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
-        #   shutil.rmtree(folder)
+        for file in next(os.walk(temp_dir))[2]: # files in temp_dir
+           try:
+               os.remove(file)
+           except Exception:
+               print(file + " file could not be deleted when checking temp_dir is empty")
+
+        for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
+           try:
+               shutil.rmtree(folder)
+           except Exception:
+               print(folder + " folder could not be deleted when checking temp_dir is empty")
 
 
         # Save file into Temp
