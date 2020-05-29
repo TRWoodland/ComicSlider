@@ -182,9 +182,9 @@ def lambda_handler(event, context):
     try:
         # write file to S3             source, bucket, target
         print("write file to S3")
-        s3.meta.client.upload_file(newFile, "comicslidertemp", "myfile.pptx") #TODO STRIP PATH FROM NEWFILE
+        s3.meta.client.upload_file(newFile, "comicslidertemp", os.path.split(newFile)[1]) #strips path from newFile
         print("generate url to bucket")
-        bucketUrl = create_presigned_url("comicslidertemp", "myfile.pptx", 3600) #TODO
+        bucketUrl = create_presigned_url("comicslidertemp", os.path.split(newFile)[1], 3600)
 
         # TODO fill with remaining copy/link functions
 
