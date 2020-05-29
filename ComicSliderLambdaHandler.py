@@ -143,7 +143,6 @@ def lambda_handler(event, context):
                 XmlDict = XmlReader(os.path.join(temp_dir, '{Extra} ComicInfo.xml'))
 
         # Seperate Summary
-
         SummaryDict = {}
         if 'Summary' in XmlDict:
             SummaryDict['Summary'] = XmlDict['Summary']
