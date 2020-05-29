@@ -117,9 +117,9 @@ def lambda_handler(event, context):
             raise Exception('Failed to decompress into Temp directory')
 
         # TODO fill with remaining clean functions
-
+        print("CleanFolder")
         CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
-
+        print("")
         if not ProcessImages(temp_dir, IMAGEEXT):  # Check dimensions, portrait # returns W&H
             print('Process Images Failed')
             exit()
@@ -130,9 +130,11 @@ def lambda_handler(event, context):
         width, height = FirstImageDimensions(temp_dir)  # in inches
 
         # Make presentation
+        print("Make presentation")
         prs = MakePresentation(width, height)
 
         # Check XML exists
+        print("Check XML exists")
         XmlDict = {}
         if os.path.isfile(os.path.join(temp_dir, 'ComicInfo.xml')):  # If ComicInfo exists
             XmlDict = XmlReader(os.path.join(temp_dir, 'ComicInfo.xml'))
@@ -155,6 +157,7 @@ def lambda_handler(event, context):
                 pageList.append(page)
 
         # BUILD COMIC
+        print("Build comic")
         for page in pageList:  # iterate through the pages
             prs = AddSlide(prs, (os.path.join(temp_dir, page)))  # make page
 
