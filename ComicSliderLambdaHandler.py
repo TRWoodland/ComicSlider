@@ -2,7 +2,7 @@ import sys, os, tempfile, time
 from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
-from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
+from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError, SeeOther
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, XmlReader, create_presigned_url
 from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
     SavePPTX, ProcessImages
@@ -200,6 +200,9 @@ def lambda_handler(event, context):
 
     except Exception as e:
         raise InternalServerError(str(e))
+
+    # Response with a HTTP 303 SeeOther
+    #raise SeeOther(bucketUrl)
 
     return {
         'statusCode': 200,

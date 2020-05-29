@@ -1,3 +1,7 @@
+class SeeOther(ValueError):
+    def __init__(self, message):
+        super(SeeOther, self).__init__("See Other: " + str(message))
+
 class BadRequestError(ValueError):
     def __init__(self, message):
         super(BadRequestError, self).__init__("Bad Request: " + str(message))
