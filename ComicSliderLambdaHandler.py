@@ -189,7 +189,7 @@ def lambda_handler(event, context):
 
 
         # Make sure link has been assigned
-        if link is None:
+        if bucketUrl is None:
             raise Exception('link is none')
 
     except Exception as e:
@@ -197,5 +197,5 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
-        'body': json.dumps(link)
+        'body': bucketUrl
     }
