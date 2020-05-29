@@ -170,9 +170,9 @@ def lambda_handler(event, context):
         if prs is None:
             raise Exception('prs is none')
 
-        # TODO make sure the original filename in the variable below
+        print("file_name is: " + file_name)
         newFile = SavePPTX(prs, file_name, temp_dir)
-        # TODO PPTX File is built, path and file stored as newFile
+        print("newFile is: " + newFile)
     except Exception as e:
         raise InternalServerError(str(e))
 
@@ -181,8 +181,9 @@ def lambda_handler(event, context):
     # Copy to S3 and return link
     try:
         # write file to S3             source, bucket, target
+        print("write file to S3")
         s3.meta.client.upload_file(file_name, "comicslidertemp", newFile)
-
+        print("generate url to bucket")
         bucketUrl = create_presigned_url("comicslidertemp", newFile, 3600)
 
         # TODO fill with remaining copy/link functions
