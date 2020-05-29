@@ -3,7 +3,7 @@ from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
-from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, XmlReader
+from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, XmlReader, create_presigned_url
 from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
     SavePPTX, ProcessImages
 import shutil #for free space
@@ -181,7 +181,8 @@ def lambda_handler(event, context):
     # Copy to S3 and return link
     try:
         # write file to S3             source, bucket, target
-        s3.meta.client.upload_file(file_name, "comicslidertemp", file_name, Callback=print_progress)
+        s3.meta.client.upload_file(file_name, "comicslidertemp", file_name)
+
         bucketUrl = create_presigned_url("comicslidertemp", file_name, 3600)
 
         # TODO fill with remaining copy/link functions
