@@ -3,7 +3,7 @@ from base64 import urlsafe_b64decode
 from pathlib import Path
 import boto3, json
 from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServerError
-from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder
+from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, XmlReader
 from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
     SavePPTX, ProcessImages
 import shutil #for free space
