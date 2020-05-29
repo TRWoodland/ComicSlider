@@ -34,14 +34,10 @@ def lambda_handler(event, context):
         # Update to new temp dir to include sub-directory
         temp_dir = os.path.join(temp_dir, 'ComicSliderTemp')
 
-
-
         # Check we have plenty of space in the temp directory
         total, used, free = shutil.disk_usage(temp_dir) #in bytes
         if free < 419430400: # bytes // (1024 * 1024) # converts to megabytes
             raise Exception('Not enough space to continue')
-
-
 
     except Exception as e:
         raise InternalServerError(str(e))
@@ -73,14 +69,24 @@ def lambda_handler(event, context):
         assert file_name is not None
         assert file_bytes is not None
 
-        # Write the incoming file onto the filesystem
-        f = open(os.path.join(temp_dir, file_name), "wb")
-        f.write(file_bytes )
-        f.close()
-
         # Check file_name has one of the accepted extensions
         if not IsComic(file_name, COMICEXT):
             raise Exception('Bad Comic Extension')
+
+        # Check file is too small
+        if len(file_bytes) < 1024:
+            raise Exception('Comic is too small')
+
+        # Check file is too big
+        if len(file_bytes) > 10485760:
+            raise Exception('Comic is too big')
+
+        # Write the incoming file onto the filesystem
+        f = open(os.path.join(temp_dir, file_name), "wb")
+        f.write(file_bytes)
+        f.close()
+
+
 
         # Check temp_dir is empty.
         for file in next(os.walk(temp_dir))[2]: # files in temp_dir
@@ -116,15 +122,11 @@ def lambda_handler(event, context):
         if not DecompressToTemp(os.path.join(temp_dir, file_name), temp_dir): #File, and folder
             raise Exception('Failed to decompress into Temp directory')
 
-        # TODO fill with remaining clean functions
-        print("CleanFolder")
-        CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir)
-        print("")
+        if not CleanFolder(temp_dir, file_name, ALLOWEDEXT, temp_dir):
+            raise Exception('Clean Folder Failed')
+
         if not ProcessImages(temp_dir, IMAGEEXT):  # Check dimensions, portrait # returns W&H
-            print('Process Images Failed')
-            exit()
-        #TODO: @JOHN if processImages fails/returns false, what exception should be raised?
-        # How would it fail?
+            raise Exception('Process Images Failed')
 
         # Get dimensions of first image
         width, height = FirstImageDimensions(temp_dir)  # in inches
@@ -201,10 +203,5 @@ def lambda_handler(event, context):
     except Exception as e:
         raise InternalServerError(str(e))
 
-    # Response with a HTTP 303 SeeOther
-    #raise SeeOther(bucketUrl)
-
-    return {
-        'statusCode': 200,
-        'body': bucketUrl
-    }
+    # Default is to response with a HTTP 303 SeeOther, which redirects the client to the comic file
+    return {"location": bucketUrl}

@@ -187,6 +187,7 @@ def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
 
                     shutil.move(os.path.join(Foldername, Filename),
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
+    return True
 
 #Generate URL to Bucket file
 def create_presigned_url(bucket_name, object_name, expiration=3600):
