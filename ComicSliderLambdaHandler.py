@@ -181,9 +181,9 @@ def lambda_handler(event, context):
     # Copy to S3 and return link
     try:
         # write file to S3             source, bucket, target
-        s3.meta.client.upload_file(file_name, "comicslidertemp", file_name)
+        s3.meta.client.upload_file(file_name, "comicslidertemp", newFile)
 
-        bucketUrl = create_presigned_url("comicslidertemp", file_name, 3600)
+        bucketUrl = create_presigned_url("comicslidertemp", newFile, 3600)
 
         # TODO fill with remaining copy/link functions
 
