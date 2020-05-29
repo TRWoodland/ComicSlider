@@ -134,7 +134,7 @@ def AddXmlSlide(prs, XmlDict):
     return prs
 
 def SavePPTX(prs, filename, TEMPDIR):
-    newFile = NewFilePath(os.path.join(TEMPDIR, filename))
+    newFile = os.path.join(TEMPDIR, (filename[:-4] + ".pptx"))
     prs.save(newFile)
     print("New Comic Created: " + newFile)
     return newFile
