@@ -163,7 +163,9 @@ def lambda_handler(event, context):
                     prs = AddXmlSlide(prs, XmlDict)  # Create Main Metadata page
                 if 'Summary' in SummaryDict:  # If Summary dict exists
                     prs = AddXmlSlide(prs, SummaryDict)  # Create Summary page
-        return prs
+
+        if prs is None:
+            raise Exception('prs is none')
 
         # TODO make sure the original filename in the variable below
         newFile = SavePPTX(prs, file_name, temp_dir)
