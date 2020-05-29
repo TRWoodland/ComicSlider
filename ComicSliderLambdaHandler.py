@@ -182,14 +182,16 @@ def lambda_handler(event, context):
     try:
         # write file to S3             source, bucket, target
         print("write file to S3")
-        s3.meta.client.upload_file(file_name, "comicslidertemp", newFile)
+        s3.meta.client.upload_file(newFile, "comicslidertemp", "myfile.pptx") #TODO STRIP PATH FROM NEWFILE
         print("generate url to bucket")
-        bucketUrl = create_presigned_url("comicslidertemp", newFile, 3600)
+        bucketUrl = create_presigned_url("comicslidertemp", "myfile.pptx", 3600) #TODO
 
         # TODO fill with remaining copy/link functions
 
 
         # Make sure link has been assigned
+        if not isinstance(bucketUrl, str):
+            raise Exception('link is not a string')
         if bucketUrl is None:
             raise Exception('link is none')
 
