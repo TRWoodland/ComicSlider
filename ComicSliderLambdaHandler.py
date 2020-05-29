@@ -83,10 +83,10 @@ def lambda_handler(event, context):
             raise Exception('Bad Comic Extension')
 
         # Check temp_dir is empty.
-        for file in next(os.walk(temp_dir))[2]: # files in temp_dir
-            os.remove(file)
-        for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
-            shutil.rmtree(folder)
+        #for file in next(os.walk(temp_dir))[2]: # files in temp_dir
+        #   os.remove(file)
+        #for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
+        #   shutil.rmtree(folder)
 
 
         # Save file into Temp
