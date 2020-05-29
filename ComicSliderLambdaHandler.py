@@ -9,7 +9,7 @@ from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, A
 import shutil #for free space
 import email.parser
 
-COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
+COMICEXT = ['.cbz', '.zip']
 IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
 OTHEREXT = ['.xml']
 ALLOWEDEXT = IMAGEEXT + OTHEREXT
@@ -155,8 +155,6 @@ def lambda_handler(event, context):
             FName, FExt = os.path.splitext(page)
             if FExt == '.jpg':
                 pageList.append(page)
-
-        print(*pageList)
 
         pageList = sorted(pageList)
         print("sorted:")

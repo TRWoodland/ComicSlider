@@ -133,7 +133,7 @@ def XmlReader(comicinfo):
 
 def IsComic(Filename, COMICEXT): #is file a comic
     #global COMICEXT
-    FName, FExt = os.path.splitext(Filename)  # Split filename and ext
+    FName, FExt = os.path.splitext(Filename.lower())  # Split filename and ext
     if FExt in COMICEXT:
         print('Is Comic: ' + Filename)
         return True
