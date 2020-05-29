@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import date
 import xmltodict
 import patoolib #compression
+import boto3
 
 
 class FileUtils():
