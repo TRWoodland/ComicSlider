@@ -151,9 +151,6 @@ def ConvertComic(file, COMICEXT):
             pageList.append(page)
 
     # BUILD COMIC
-    print("pageList: " + pageList)
-    pageList = sorted(pageList)
-    print("Sorted because for some reason comic was in reverse: " + pageList)
     for page in pageList: #iterate through the pages
         prs = AddSlide(prs, (os.path.join(TEMPDIR, page))) #make page
 

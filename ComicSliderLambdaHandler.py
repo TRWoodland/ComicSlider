@@ -156,6 +156,12 @@ def lambda_handler(event, context):
             if FExt == '.jpg':
                 pageList.append(page)
 
+        print(*pageList)
+
+        pageList = sorted(pageList)
+        print("sorted:")
+        print(*pageList)
+
         # BUILD COMIC
         print("Build comic")
         for page in pageList:  # iterate through the pages
