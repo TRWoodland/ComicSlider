@@ -8,6 +8,7 @@ from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, A
     SavePPTX, ProcessImages
 import shutil #for free space
 import email.parser
+import json
 
 COMICEXT = ['.cbz', '.zip']
 IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
@@ -49,14 +50,24 @@ def lambda_handler(event, context):
     # Check/Validate Input(The HTTP Request)
     try:
         # Determine Input contains body-json (API Gateway will pass form-data within this)
-        if not 'body-json' in event:
+        if 'body-json' not in event:
             raise Exception("Missing key:body-json")
-        if not 'params' in event:
+        if 'params' not in event:
             raise Exception("Missing key:params")
+        if 'header' not in event['params']:
+            raise Exception("Missing key:header")
+        if 'Content-Type' in event['params']['header']:
+            form_hdr = event['params']['header']['Content-Type']
+        elif 'content-type' in event['params']['header']:
+            form_hdr = event['params']['header']['content-type']
+
+        if not isinstance(form_hdr, str):
+            raise Exception("Missing form_hdr")
 
         # Expecting the File to arrive within a HTTP Form of type: multipart/form-data
+        # TODO Check encoding in Content-Type header
         form_data = urlsafe_b64decode(event['body-json'])
-        form_hdr = event['params']['header']['Content-Type']
+
         # Build a compliant SMIME message
         msg_bytes = "Content-Type: ".encode("utf8") + form_hdr.encode("utf8") + "\n".encode("utf8") + form_data
 
