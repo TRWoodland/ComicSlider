@@ -1,0 +1,97 @@
+<!DOCTYPE html> <!-- GET FAVICON for website! -->
+<html>
+<head>
+
+    <!--    Logo header from scratch.html-->
+    <iframe
+
+            name = "Logo"
+            width = "100%"
+            height = "350"
+            frameborder = "0"
+            scrolling = "no"
+            src="scratch.html">
+    </iframe>
+
+    <title>ComicSlider - CBZ to PPTX converter</title>
+
+    <link rel='stylesheet' href='style.css' />
+
+    <!--    icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+    <link rel="manifest" href="/site.webmanifest">
+<!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+
+<style>
+  .synthwave-m {
+    background: linear-gradient(172deg, #C115D7 0%, #B510D6 4%, #540101 5%, #FCA10F 18%, #FFD82D 21%, #FCA10F 24%, #05253D 25%, #0E5BCE 35%, #3C8FCA 43%, #79BFE0 45%, #090D6D 46%, #000002 56%, #3B3FA9 60%, #2DBCFF 61%, #318AD3 73%, #13A7F7 74%, #352313 75%, #F29C5A 91%, #FC411C 92%, #F29C5A 100%);
+  }
+</style>
+<script>
+t = 0
+function start_timer();
+{
+    setInterval(set_progress(t + 10), 1000);
+
+}
+
+function set_progress(p)
+{
+    var pbar = document.getElementById("pbar");
+    pbar.style.width = p + "%";
+}
+</script><!-- javascript function -->
+
+</head>
+  <div id="demo-body" class="synthwave-a">
+  </div>
+
+<body onload="set_progress(0);">
+    <body class="synthwave-k">
+
+<!--        <img src = "logotitle.jpg" style="max-width: 100%; height: auto;" alt = "ComicSlider: Turn comics into a free storage format!">-->
+        <h1> ComicSlider converts CBZ files into PPTX files, which can then be uploaded to Google Drive for free cloud storage </h1>
+
+<h2> Heading </h2>
+<h3> </h3>
+
+    <h3>Please select a comic file to convert</h3>
+<div>
+    progress p
+{
+	display: block;
+	width: 240px;
+	padding: 2px 5px;
+	margin: 2px 0;
+	border: 1px inset #446;
+	border-radius: 5px;
+}
+</div>
+
+
+<div class="w3-container">
+    <form method="POST" enctype="multipart/form-data" action="https://5kovci2tqe.execute-api.eu-west-2.amazonaws.com/Prod">
+      <label for="myfile">Select a file:</label>
+      <input type="file" id="myfile" name="myfile"><br><br>
+      <input type="submit" onclick="start_timer()">
+    </form>
+    <div class="w3-light-grey">
+        <div id="pbar" class="w3-container w3-red w3-center">hello</div>
+
+    </div><br>
+
+
+</div>
+
+<img src = "Niko.jpg" alt = "Niko the cat. Half Maine Coon, half Nicola Tesla"> <!-- alt is desc for SEO & the blind -->
+
+
+
+</div>
+    </body>
+</body>
+
+</html>
