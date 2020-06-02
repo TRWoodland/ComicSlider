@@ -1,21 +1,24 @@
-<!DOCTYPE html> <!-- GET FAVICON for website! -->
+<!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 
     <!--    Logo header from outrun.html-->
     <iframe
-
             name = "Logo"
             width = "100%"
             height = "350"
             frameborder = "0"
             scrolling = "yes"
+            border = 10px red;
             src="outrun.html">
+        <div> border-color: coral; </div>
     </iframe>
 
     <title>ComicSlider - CBZ to PPTX converter</title>
 
-<!--    <link rel='stylesheet' href='style.css' />-->
 
     <!--    icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -23,13 +26,15 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 
     <link rel="manifest" href="/site.webmanifest">
-<!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
 
-<style>
+<style type="text/css">
+   gridcolour { border: #CF33D9; }
+   body {background-color: #000000;}
   .synthwave-m {
     background: linear-gradient(172deg, #C115D7 0%, #B510D6 4%, #540101 5%, #FCA10F 18%, #FFD82D 21%, #FCA10F 24%, #05253D 25%, #0E5BCE 35%, #3C8FCA 43%, #79BFE0 45%, #090D6D 46%, #000002 56%, #3B3FA9 60%, #2DBCFF 61%, #318AD3 73%, #13A7F7 74%, #352313 75%, #F29C5A 91%, #FC411C 92%, #F29C5A 100%);
   }
 </style>
+
 <script>
 t = 0
 function start_timer();
@@ -44,21 +49,28 @@ function set_progress(p)
     pbar.style.width = p + "%";
 }
 </script><!-- javascript function -->
-
 </head>
-  <div id="demo-body" class="synthwave-a">
-  </div>
 
-<body onload="set_progress(0);">
-    <body class="synthwave-k">
+<body class="synthwave-k" onload="set_progress(0);">
+    <div class="w3-theme-d2">
+        <iframe class="gridcolour"
+                src="links.html"
+                frameborder="0"
+                scrolling="no"
+                width="20%"
+                height="512"
+                align="right" >
+    </iframe></div>
 
-<!--        <img src = "logotitle.jpg" style="max-width: 100%; height: auto;" alt = "ComicSlider: Turn comics into a free storage format!">-->
-        <h1> ComicSlider converts CBZ files into PPTX files, which can then be uploaded to Google Drive for free cloud storage </h1>
+    <h1 class="w3-theme-d2"> Convert comics into a format that has free cloud storage </h1>
+    <p class="w3-theme-d2"> Comic Slider rebuilds CBZ comic files into PPTX, which can then be uploaded
+    and auto-converted into Google Slides format. All picture quality and metadata is kept & searchable.
+    Use Slides in presentation mode to read comics like normal. </p>
 
-<h2> Heading </h2>
-<h3> </h3>
+    <p class="w3-theme-d2"> For the time being please only convert 10 comics per day as I'm uncertain of server costs at the moment</p>
+    <p class="w3-theme-d2"> There will be a cross platform gui available soon (not HL3 soon) </p>
 
-    <h3>Please select a comic file to convert</h3>
+    <h3 class="w3-theme-d2">Please select a comic file to convert</h3>
 <div>
     progress p
 {
@@ -71,27 +83,14 @@ function set_progress(p)
 }
 </div>
 
-
 <div class="w3-container">
     <form method="POST" enctype="multipart/form-data" action="https://5kovci2tqe.execute-api.eu-west-2.amazonaws.com/Prod">
-      <label for="myfile">Select a file:</label>
+      <label for="myfile" class="w3-theme-d2">Select a file:</label>
       <input type="file" id="myfile" name="myfile"><br><br>
       <input type="submit" onclick="start_timer()">
     </form>
-    <div class="w3-light-grey">
-        <div id="pbar" class="w3-container w3-red w3-center">hello</div>
-
-    </div><br>
-
-
 </div>
 
 <img src = "Niko.jpg" alt = "Niko the cat. Half Maine Coon, half Nicola Tesla"> <!-- alt is desc for SEO & the blind -->
-
-
-
-</div>
-    </body>
 </body>
-
 </html>
