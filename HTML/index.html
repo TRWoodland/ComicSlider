@@ -27,13 +27,12 @@
 </style>
 
 <script>
-
 function setup()
 {
     var loading = document.getElementById("loading");
     var form = document.forms.namedItem("submit_comic_form");
     var download_container = document.getElementById("download_container");
-    var download_link = document.getElementById("download_container");
+    var download_link = document.getElementById("download_link");
 
     loading.style.display = "none";
     download_container.style.display = "none";
@@ -50,7 +49,8 @@ function setup()
         if (oReq.status == 200) {
             var jsonObj = JSON.parse(oReq.response);
             download_container.style.display = "block";
-            download_link.href = jsonObj.location;
+            download_link.setAttribute("href", jsonObj.location);
+            console.log(jsonObj.location);
         } else {
             var jsonObj = JSON.parse(oReq.response);
             alert(jsonObj.errorMessage);
@@ -101,6 +101,7 @@ function setup()
     <p class="w3-theme-d2"> There will be a cross platform program for mass processing available soon (not HL3 soon) </p>
 
     <h3 class="w3-theme-d2">Please select a comic file to convert</h3>
+    <p class="w3-theme-d2"></p>
 <div>
   <!--  progress p
 {
@@ -116,8 +117,8 @@ function setup()
 <div class="w3-container">
     <form name="submit_comic_form" method="POST" enctype="multipart/form-data" action="https://5kovci2tqe.execute-api.eu-west-2.amazonaws.com/Prod">
       <label for="myfile" class="w3-theme-d2">Select a file:</label>
-      <input type="file" id="myfile" name="myfile"><br><br>
-      <input type="submit">
+      <input  class="w3-theme-d2" type="file" id="myfile" name="myfile" accept=".zip,.cbz">><br><br>
+      <input  class="w3-theme-d2" type="submit">
     </form>
     <img id="loading" src="loading.gif" alt="Loading Animation">
     <div id="download_container">
@@ -126,6 +127,10 @@ function setup()
     </div>
 </div>
 
-<img src = "Niko.jpg" alt = "Niko the cat. Half Maine Coon, half Nicola Tesla" width="100%"> <!-- alt is desc for SEO & the blind -->
+<figure>
+    <img src = "Niko.jpg" alt = "Niko the cat. Half Maine Coon, half Nicola Tesla" width="100%"> <!-- alt is desc for SEO & the blind -->
+    <figcaption class="w3-theme-d2">Niko the cat. Half Maine Coon, half Nicola Tesla.
+        I taught her napping next to me = Treats. She taught me Python. </figcaption>
+</figure>
 </body>
 </html>
