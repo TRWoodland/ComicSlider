@@ -1,17 +1,19 @@
 import boto3,json
 
-#function to copy temp file to bucket
-def TempToBucket(file, filename, targetbucket): #"comicslidertemp"
+
+# function to copy temp file to bucket
+def TempToBucket(file, filename, targetbucket): # "comicslidertemp"
     s3 = boto3.resource('s3')
+
     def print_progress(num_of_bytes_uploaded):
-        print(f"Written {num_of_bytes_uploaded} to S3 bucket.") #this doesn't seem to return anything in lambda
+        print(f"Written {num_of_bytes_uploaded} to S3 bucket.")  # this doesn't seem to return anything in lambda
                                                                 # when whole func is run
 
     s3.meta.client.upload_file(file, targetbucket, filename, Callback=print_progress)
     return {'body': json.dumps('File written')}
 
 
-#Generate URL to Bucket file
+# Generate URL to Bucket file
 def create_presigned_url(bucket_name, object_name, expiration=3600):
     """Generate a presigned URL to share an S3 object
 
