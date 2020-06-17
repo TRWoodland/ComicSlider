@@ -4,13 +4,13 @@ import shutil
 from pathlib import Path
 from datetime import date
 import xmltodict
-import patoolib #compression
+import patoolib  # compression
 import boto3
 
 
 class FileUtils():
-    @staticmethod # Always there, without creating the object instance
-    def ListFiles(folder): #remove self if made static
+    @staticmethod  # Always there, without creating the object instance
+    def ListFiles(folder):  # remove self if made static
         print(next(os.walk(folder))[2])
 
 
@@ -23,8 +23,8 @@ def DoesNewFileExist(newFile):
 
 def NewFilePath(originalfile, SOURCEDIR, OUTPUTDIR):
     # get original filename & ext
-    FName, FExt = os.path.splitext(originalfile) #path\file and .ext
-    FName = Path(FName).stem #Removes path, leaving extensionless filename
+    FName, FExt = os.path.splitext(originalfile)  # path\file and .ext
+    FName = Path(FName).stem  # Removes path, leaving extensionless filename
 
     # if source file in SOURCEDIR root, or doesn't come from any SOURCEDIR subdirs:
     if os.path.dirname(originalfile) == SOURCEDIR or os.path.dirname(originalfile) not in SOURCEDIR:
@@ -33,7 +33,7 @@ def NewFilePath(originalfile, SOURCEDIR, OUTPUTDIR):
         newFile = str(os.path.join(OUTPUTDIR, FName)) + '.pptx'
     else:
         # build path and filename for OUTPUTDIR subdirs
-        newFile = os.path.dirname(originalfile) #gets the folder&path the file is in
+        newFile = os.path.dirname(originalfile)  # gets the folder&path the file is in
         newFile = os.path.relpath(originalfile, SOURCEDIR)  # get relative path to source
         newFile = str(os.path.join(OUTPUTDIR, newFile, FName)) + '.pptx'  # build new path & filename
     return newFile
@@ -53,7 +53,7 @@ def get_size(FolderSource):
     # print((get_size() // (1024 * 1024 * 1024)), 'GigaBytes')  # Little bit off
 
     # Space on destination drive
-    total, used, free = shutil.disk_usage(OutputDir)
+    # total, used, free = shutil.disk_usage(OutputDir)
     # print(free // (1024 * 1024 * 1024), "GBs free")
 
 def DecompressToTemp(file, TEMPDIR):
@@ -65,7 +65,7 @@ def DecompressToTemp(file, TEMPDIR):
     else:
         return True
 
-#Function to test Comic
+# Function to test Comic
 def CheckArchive(archive_path):
     """Check that a given archive is actually ok for reading.
     Args:
@@ -81,9 +81,6 @@ def CheckArchive(archive_path):
     else:
         return True
 
-# Function to check image is not in SHITLIST
-def InSHITLIST():
-    pass
 
 def FindNewFilename(Destination, Filename):
     i = 0
@@ -98,13 +95,13 @@ def FindNewFilename(Destination, Filename):
 #     print("CHANGE THE SOURCE OR OUTPUT")
 #     exit()
 
-#check if directory exists
+# check if directory exists
 # if os.path.exists(OUTPUTDIR) is False:  # If default folder doesn't exist
 #     os.makedirs(OUTPUTDIR)
 
-#Check size of source folder
+# Check size of source folder
 
-#Load XML
+# Load XML
 def XmlReader(comicinfo):
     try:
         fd = open(comicinfo)
@@ -114,11 +111,11 @@ def XmlReader(comicinfo):
         doc = xmltodict.parse(fd.read())
         print("Using UTF8 for encoding")
 
-    #remove crap
+    # remove crap
     XmlDelete = []
     for key in doc['ComicInfo']:
         if key[0] == "@":
-            #print(XmlDict[key])
+            # print(XmlDict[key])
             XmlDelete.append(key) # makes a list of keys to delete#######################
         if isinstance(doc['ComicInfo'][key], str) is False:
             XmlDelete.append(key)
@@ -132,7 +129,7 @@ def XmlReader(comicinfo):
 
 
 def IsComic(Filename, COMICEXT): #is file a comic
-    #global COMICEXT
+    # global COMICEXT
     FName, FExt = os.path.splitext(Filename.lower())  # Split filename and ext
     if FExt in COMICEXT:
         print('Is Comic: ' + Filename)
@@ -155,19 +152,19 @@ def MoveFolders(Source, Destination):
 
 
 
-#If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
+# If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
 def EmptyFolderDrop(TEMPDIR):
-    files = next(os.walk(TEMPDIR))[2] #Files in TEMPDIR, not subfolders.
-    if len(files) < 1: #if there are no files
-        folders = next(os.walk(TEMPDIR))[1] #How many folders?
-        if len(folders) == 1: #If there is one folder
-            MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR) #Move everything in this folder to TEMPDIR
+    files = next(os.walk(TEMPDIR))[2] # Files in TEMPDIR, not subfolders.
+    if len(files) < 1: # if there are no files
+        folders = next(os.walk(TEMPDIR))[1] # How many folders?
+        if len(folders) == 1: # If there is one folder
+            MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR) # Move everything in this folder to TEMPDIR
 
 def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
     EmptyFolderDrop(TEMPDIR)
 
     for Foldername, Subfolders, Filenames in os.walk(TEMPDIR):
-        #print('Current folder:' + Foldername)
+        # print('Current folder:' + Foldername)
         for Filename in Filenames:
             FName, FExt = os.path.splitext(Filename)  # Split filename and ext
             if FExt not in ALLOWEDEXT:
@@ -189,23 +186,24 @@ def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
     return True
 
-#Generate URL to Bucket file
+
+# Generate URL to Bucket file
 def create_presigned_url(bucket_name, object_name, expiration=3600):
-    """Generate a presigned URL to share an S3 object
+    """Generate a preassigned URL to share an S3 object
 
     :param bucket_name: string
     :param object_name: string
     :param expiration: Time in seconds for the presigned URL to remain valid
-    :return: Presigned URL as string. If error, returns None.
+    :return: Preassigned URL as string. If error, returns None.
     """
 
-    # Generate a presigned URL for the S3 object
+    # Generate a preassigned URL for the S3 object
     s3_client = boto3.client('s3')
     response = s3_client.generate_presigned_url('get_object',
                                                     Params={'Bucket': bucket_name,
                                                             'Key': object_name},
                                                     ExpiresIn=expiration)
-    # The response contains the presigned URL
+    # The response contains the preassigned URL
     return response
 
 
