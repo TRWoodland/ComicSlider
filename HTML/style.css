@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 @font-face {
-  font-family: OutRun;
-  src: url("https://jackphilippi.com.au/cdn/fonts/outrun_future.otf") format("opentype");
-}
+  font-family: 'Lexend Tera', sans-serif;
 <html>
 <title>W3.CSS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
 <body>
-
+body{
+font-family: 'Lexend Tera', sans-serif;
+}
+}
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Tera&display=swap" rel="stylesheet">
+font-family: 'Lexend Tera', sans-serif;
 <div class="w3-card-4">
 <div class="w3-container w3-theme w3-card">
   <h1>Indigo</h1>

@@ -1,9 +1,10 @@
-#require libraries pip install rarfile xmltodict patool, Pillow
+# require libraries pip install rarfile xmltodict patool, Pillow
 import os
 import shutil
 import time
-import argparse #allows input by commandline
+import argparse  # allows input by commandline
 import tempfile
+import logging
 from sys import platform
 import shutil
 from Utils import CheckArchive, DecompressToTemp, get_size, IsComic, CleanFolder, \
@@ -11,11 +12,28 @@ from Utils import CheckArchive, DecompressToTemp, get_size, IsComic, CleanFolder
 from ImagesPPTX import RotateToPortrait, ConvertToJpg, GetImageDimensionsInches, \
     MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, SavePPTX, ProcessImages
 
-#AWS Test
-if platform == "linux": #if platform is linux
-    if os.path.exists("/tmp"): #if /tmp exists
-        TEMPDIR = ()
-        amazon = True
+# test whether on AWS Lambda
+if os.environ.get("AWS_EXECUTION_ENV") is None:
+    AWS = False
+    print("Not running on AWS Lambda")
+else:
+    AWS = True
+    print("on aws")
+
+# if AWS == False:
+#     # Gui test for main script
+#     runningGui = "ComicSliderGui" in locals() or "ComicSliderGui" in globals()
+#     if runningGui == True:
+#         print("ComicSliderGui is running")
+
+# logging
+today = date.today()
+today.strftime("%d %B %Y")  # pretty string
+global loggerfile
+loggerfile = 'ComicSlider' + today.strftime("%d%B%Y") + '.txt'
+logging.basicConfig(filename=loggerfile,level=logging.DEBUG)
+logging.warning('started')
+
 
 SHITLIST = ['zThe-Hand.jpg']
 IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
@@ -25,10 +43,10 @@ ALLOWEDEXT = IMAGEEXT + OTHEREXT
 EXAMINERLIST = ['.mp4', '.mpg', '.avi', '.mov', '.flv', '.mpeg', '.mp3', '.mpa', '.doc', '.docx'
                 '.wav', '.flac', '.ogg', '.zip', '.rar', '.cbr', '.cbz', '7z', '.pdf']
 
-#INPUT Output Directory
-if amazon == False:
-    OUTPUTDIR = 'F:\Google Drive\Synced\PythonProjects\ComicSlider\ProcessedComics'
-    SOURCEDIR = 'F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'
+# INPUT Output Directory
+if AWS == False:
+    OUTPUTDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\ProcessedComics'''
+    SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'''
 else:
     if not os.path.exists(os.path.join(tempfile.gettempdir(), 'SOURCEDIR')):  # if folder doesn't exist
         os.mkdir(os.path.join(tempfile.gettempdir(), 'SOURCEDIR'))  # make it
@@ -39,44 +57,48 @@ else:
     OUTPUTDIR = os.path.join(tempfile.gettempdir(), 'OUTPUTDIR')
 
 
-#Generate TEMPDIR. FOLDER IS EMPTIED WHEN PROCESS COMPLETED!
-if not os.path.exists(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')): #if folder doesn't exist
-    os.mkdir(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')) #make it
+# Generate TEMPDIR. FOLDER IS EMPTIED WHEN PROCESS COMPLETED!
+if not os.path.exists(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')): # if folder doesn't exist
+    os.mkdir(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')) # make it
 TEMPDIR = os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')
-
 print("Files will temporarily stored in: " + TEMPDIR) # prints the current temporary directory
+
 
 parser = argparse.ArgumentParser(description='Comic Slider parser')
 parser.add_argument('--filename', help='the file name')
 parser.add_argument('--foldername', help='the foldername')
 args = parser.parse_args()
 print(args.foldername)
-#Input validation
-if args.filename==None and args.foldername==None: #if that particualar arg not given, do this
-    print("no arg given")#
+
+# Input validation
+if args.filename is None and args.foldername is None:  # if that particular arg not given, do this
+    print("no arg given")
     exit()
 
-if args.filename: #arg given, do this
+if args.filename:  # arg given, do this
     print("Filename given: " + args.filename)
     if not os.path.isfile(args.filename):
         print("File doesn't exist")
         exit()
-    if not os.path.isabs(args.filename): #If file doesn't have a complete path
+    if not os.path.isabs(args.filename):  # If file doesn't have a complete path
         print("File doesn't have a complete path: "  + args.filename)
     else:
         print("File Found: " + args.filename)
 
-if args.foldername: #arg given, do this
+if args.foldername:  # arg given, do this
     print("Foldername given: " + args.foldername)
     if not os.path.exists(args.foldername):
         print("Folder doesn't exist")
         exit()
     else:
         print("Folder Found: " + args.foldername)
+#
+# if args.GUI:
+#     print(runningGui)
 
-#EmptyTempDir
+# EmptyTempDir
 def EmptyTempDir(TEMPDIR):
-    if os.path.exists(TEMPDIR): #makes sure Temp is empty
+    if os.path.exists(TEMPDIR):  # makes sure Temp is empty
         shutil.rmtree(TEMPDIR)
         time.sleep(2)
         try:
@@ -84,23 +106,24 @@ def EmptyTempDir(TEMPDIR):
         except PermissionError:
             print('Too quick to remake folder')
             exit()
+
+
 # Remake Folder Structure in SOURCEDIR to OUTPUTDIR
 def RemakeFolderStructure(SOURCEDIR, OUTPUTDIR):
     for Foldername, Subfolders, Filenames in os.walk(SOURCEDIR):
          NewFolder(Foldername, SOURCEDIR, OUTPUTDIR)
 
 def NewFolder(Foldername, SOURCEDIR, OUTPUTDIR):
-    if os.path.exists(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR))): #Does Current Folder exist in new location
+    if os.path.exists(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR))):  # Does Current Folder exist in new location
         print(Foldername + 'Folder Exists in OUTPUTDIR!')
     else:
-        os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR))) #Create folder
+        os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR)))  # Create folder
         print(Foldername + ' created in OUTPUTDIR!')
 
 
-
-#FILE
+# FILE
 def ConvertComic(file, COMICEXT):
-    if IsComic(file, COMICEXT) == False: #If its a comic
+    if IsComic(file, COMICEXT) == False:  # If its a comic
         return False
 
     else:
@@ -110,7 +133,7 @@ def ConvertComic(file, COMICEXT):
             print('CorruptArchive')
             Examiner(os.path.join(Foldername, file) + ' is CORRUPT', OUTPUTDIR)
             return False
-            #exit()
+            # exit()
         else:
             print('Good archive')
 
@@ -121,23 +144,23 @@ def ConvertComic(file, COMICEXT):
         exit()
     else:
         print('Good decompress')
-    #Trasnverse tempfolder, move files, remove subfolders
+    # Trasnverse tempfolder, move files, remove subfolders
     CleanFolder(TEMPDIR, file, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTPUTDIR)
-    if not ProcessImages(TEMPDIR, IMAGEEXT): #Check dimensions, portrait # returns W&H
+    if not ProcessImages(TEMPDIR, IMAGEEXT):  # Check dimensions, portrait # returns W&H
         print('Process Images Failed')
         exit()
 
-    #Get dimensions of first image
-    width, height = FirstImageDimensions(TEMPDIR) #in inches
+    # Get dimensions of first image
+    width, height = FirstImageDimensions(TEMPDIR)  # in inches
 
     prs = MakePresentation(width, height)
 
-    #Check XML exists
+    # Check XML exists
     XmlDict = {}
-    if os.path.isfile(os.path.join(TEMPDIR, 'ComicInfo.xml')): #If ComicInfo exists
+    if os.path.isfile(os.path.join(TEMPDIR, 'ComicInfo.xml')):  # If ComicInfo exists
         XmlDict = XmlReader(os.path.join(TEMPDIR, 'ComicInfo.xml'))
 
-    #Seperate Summary
+    # Separate Summary
     SummaryDict = {}
     if 'Summary' in XmlDict:
         SummaryDict['Summary'] = XmlDict['Summary']
@@ -151,13 +174,13 @@ def ConvertComic(file, COMICEXT):
             pageList.append(page)
 
     # BUILD COMIC
-    for page in pageList: #iterate through the pages
+    for page in pageList:  # iterate through the pages
         prs = AddSlide(prs, (os.path.join(TEMPDIR, page))) #make page
 
         if page == pageList[0]: # if current page is the cover
             if len(XmlDict) > 1: # if something in XmlDict
                 prs = AddXmlSlide(prs, XmlDict)  # Create Main Metadata page
-            if 'Summary' in SummaryDict: #If Summary dict exists
+            if 'Summary' in SummaryDict:  # If Summary dict exists
                 prs = AddXmlSlide(prs, SummaryDict)  # Create Summary page
 
     # for page in next(os.walk(TEMPDIR))[2]:
@@ -166,7 +189,7 @@ def ConvertComic(file, COMICEXT):
     #         prs = AddSlide(prs, (os.path.join(TEMPDIR, page)))
     return prs
 
-#FOLDER
+# FOLDER
 if args.foldername:
     RemakeFolderStructure(SOURCEDIR, OUTPUTDIR)
     for Foldername, Sfolders, Filenames in os.walk(SOURCEDIR):
@@ -179,7 +202,7 @@ if args.filename:
     prs = ConvertComic(args.filename, COMICEXT)
     newFile = SavePPTX(prs, args.filename, SOURCEDIR, OUTPUTDIR)
 
-#Empty TEMPDIR of all Files and Folders
+# Empty TEMPDIR of all Files and Folders
 for Foldername, Subfolders, Filenames in os.walk(TEMPDIR):
     for file in Filenames:
         os.unlink(os.path.join(Foldername, file))
