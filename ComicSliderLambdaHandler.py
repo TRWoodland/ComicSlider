@@ -6,7 +6,7 @@ from ComicSliderExceptions import BadRequestError, ForbiddenError, InternalServe
 from UtilsLambda import CheckArchive, IsComic, DecompressToTemp, CleanFolder, XmlReader, create_presigned_url
 from ImagesPPTXLambda import MakePresentation, AddSlide, FirstImageDimensions, AddXmlSlide, \
     SavePPTX, ProcessImages
-import shutil #for free space
+import shutil  # for free space
 import email.parser
 import json
 
@@ -102,20 +102,18 @@ def lambda_handler(event, context):
         f.write(file_bytes)
         f.close()
 
-
-
         # Check temp_dir is empty.
         for file in next(os.walk(temp_dir))[2]: # files in temp_dir
-           try:
-               os.remove(file)
-           except Exception:
-               print(file + " file could not be deleted when checking temp_dir is empty")
+            try:
+                os.remove(file)
+            except Exception:
+                print(file + " file could not be deleted when checking temp_dir is empty")
 
         for folder in next(os.walk(temp_dir))[1]: # subfolders in temp_dir
-           try:
-               shutil.rmtree(folder)
-           except Exception:
-               print(folder + " folder could not be deleted when checking temp_dir is empty")
+            try:
+                shutil.rmtree(folder)
+            except Exception:
+                print(folder + " folder could not be deleted when checking temp_dir is empty")
 
 
         # Save file into Temp
