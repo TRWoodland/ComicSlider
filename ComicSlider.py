@@ -94,7 +94,7 @@ if args.foldername:  # arg given, do this
         print("Folder Found: " + args.foldername)
 #
 # if args.GUI:
-#     print(runningGui)
+#     print(runningGui) # TODO: FINISH GUI IMPLEMENTATION
 
 # EmptyTempDir
 def EmptyTempDir(TEMPDIR):

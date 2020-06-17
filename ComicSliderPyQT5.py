@@ -6,7 +6,7 @@ from pathlib import Path  # to get home dir
 import sys
 import os  # for calc folder size
 import shutil  # for free space
-from datetime import date #
+from datetime import date  #
 import logging
 
 
@@ -51,7 +51,7 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
         self.labelFolderSize = QtWidgets.QLabel(self)
         self.labelFolderSize.setObjectName("labelFolderSize")
         self.labelFolderSize.setGeometry(QtCore.QRect(30, 130, 321, 16))
-        self.labelFolderSize.setText("Size of folder: ") #TODO Calc folder size
+        self.labelFolderSize.setText("Size of folder: ") # TODO Calc folder size
 
         self.radioButtonFile = QtWidgets.QRadioButton(self)
         self.radioButtonFile.setGeometry(QtCore.QRect(10, 10, 141, 17))
@@ -85,7 +85,7 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
         self.labelFreeSpace = QtWidgets.QLabel(self)
         self.labelFreeSpace.setObjectName("labelFreeSpace")
         self.labelFreeSpace.setGeometry(QtCore.QRect(220, 130, 121, 16))
-        self.labelFreeSpace.setText("Free space: ") #TODO CALC FREE SPACE
+        self.labelFreeSpace.setText("Free space: ") # TODO CALC FREE SPACE
 
         self.labelPPTXbuilt = QtWidgets.QLabel(self)
         self.labelPPTXbuilt.setObjectName("labelPPTXbuilt")
@@ -95,7 +95,7 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setObjectName("progressBar")
         self.progressBar.setGeometry(QtCore.QRect(10, 230, 341, 23))
-        self.progressBar.setProperty("value", 24) #TODO PROGRESS BAR
+        self.progressBar.setProperty("value", 24) # TODO PROGRESS BAR
 
         self.pushB_logfile = QtWidgets.QPushButton(self)
         self.pushB_logfile.setObjectName("pushB_logfile")
@@ -105,20 +105,20 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
 
         self.pushB_savesettings = QtWidgets.QPushButton(self)
         self.pushB_savesettings.setGeometry(QtCore.QRect(190, 500, 75, 23))
-        self.pushB_savesettings.setObjectName("pushB_savesettings") #TODO SAVE SETTINGS
+        self.pushB_savesettings.setObjectName("pushB_savesettings") # TODO SAVE SETTINGS
         self.pushB_savesettings.setText("Save Settings")
 
         self.pushB_exit = QtWidgets.QPushButton(self)
         self.pushB_exit.setObjectName("pushB_exit")
         self.pushB_exit.setGeometry(QtCore.QRect(280, 500, 75, 23))
         self.pushB_exit.setText("Exit")
-        #self.pushB_exit.clicked.connect(self.exitapp)
+        # self.pushB_exit.clicked.connect(self.exitapp)
         self.pushB_exit.clicked.connect(self.testbutton)
 
         # I would like the textBrowser to automatically update to
         # loggerfile, but couldn't figure it out
         self.textBrowser = QtWidgets.QTextBrowser(self)
-        #self.textBrowser.setPlainText(text)
+        # self.textBrowser.setPlainText(text)
         self.textBrowser.setObjectName("textBrowser")
         self.textBrowser.setGeometry(QtCore.QRect(10, 260, 341, 191))
 
@@ -135,13 +135,13 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
     #     os.system(loggerfile)
     #     self.update()
 
-    def SelectFile(self): #file is returned as a tuple
+    def SelectFile(self):  # file is returned as a tuple
         filename = QFileDialog.getOpenFileName(self, 'Open file', str(Path.home()), "Comic files (*.cbz *.cbr *.zip *.rar)")
         print("File Selected: " + str(type(filename[0])) + str(filename[0]))
         filename = filename[0]
 
         if len(filename) > 50:
-            self.labelFileSelected.setText(filename[:2] + "..." + filename[-45:]) #shorten file and path
+            self.labelFileSelected.setText(filename[:2] + "..." + filename[-45:])  # shorten file and path
         else:
             self.labelFileSelected.setText(filename)
         self.labelFileSelected.adjustSize()
@@ -151,7 +151,7 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
 
     def SelectFolder(self):
         foldername = QFileDialog.getExistingDirectory(self, "Select Directory")
-        #print("Folder Selected: " + foldername)
+        # print("Folder Selected: " + foldername)
         logging.info("Folder Selected: " + foldername)
         if len(foldername) > 50:
             self.labelFolderSelected.setText(foldername[:2] + "..." + foldername[-45:])
@@ -162,7 +162,7 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
         self.foldername = foldername
         print(foldername)
 
-        #Size
+        # Size
         if self.foldername != '':
             print(self.foldername)
             total_size = 0
@@ -214,8 +214,8 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
 
 
     def Build(self):
-        #radioButtonFile
-        #radioButtonFolder
+        # radioButtonFile
+        # radioButtonFolder
         if self.radioButtonFile.isChecked():
             if self.filename != '' and self.outputDir != '':
                 pass
@@ -228,10 +228,10 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
             text = str(file.readlines()[-13:])
         self.textBrowser.toHtml()
         self.textBrowser.setPlainText(text)
-        #self.textBrowser.moveCursor(QtGui.QTextCursor.End)
+        # self.textBrowser.moveCursor(QtGui.QTextCursor.End)
         self.update()
 
-        #os.system(loggerfile) #Doesn't work whilst program is running
+        # os.system(loggerfile) #Doesn't work whilst program is running
 
 
     def exitapp(self):
@@ -240,8 +240,8 @@ class ComicSliderGui(QMainWindow):  # use properties in in QMainWindow
     def testbutton(self):
         print("test button")
         logging.warning('test button')
-        #self.textBrowser.append(str(firstNlines))
-        #print(self.filename)
+        # self.textBrowser.append(str(firstNlines))
+        # print(self.filename)
 
 def window():
     app = QApplication(sys.argv)
@@ -256,10 +256,10 @@ window()
 
 def printLog(string, object=object, ):
     pass
-    #check global variable for lambda
+    # check global variable for lambda
 
-    #if lambda = false
+    # if lambda = false
 
-        #if ComicSliderGui exists
-            #object.textBrowser.append(string)
-            #add to logfile.txt
+        # if ComicSliderGui exists
+            # object.textBrowser.append(string)
+            # add to logfile.txt
