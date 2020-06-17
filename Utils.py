@@ -4,12 +4,12 @@ import shutil
 from pathlib import Path
 from datetime import date
 import xmltodict
-import patoolib #compression
+import patoolib  # compression
 
 
 class FileUtils():
-    @staticmethod # Always there, without creating the object instance
-    def ListFiles(folder): #remove self if made static
+    @staticmethod  # Always there, without creating the object instance
+    def ListFiles(folder):  # remove self if made static
         print(next(os.walk(folder))[2])
 
 
@@ -22,8 +22,8 @@ def DoesNewFileExist(newFile):
 
 def NewFilePath(originalfile, SOURCEDIR, OUTPUTDIR):
     # get original filename & ext
-    FName, FExt = os.path.splitext(originalfile) #path\file and .ext
-    FName = Path(FName).stem #Removes path, leaving extensionless filename
+    FName, FExt = os.path.splitext(originalfile)  # path\file and .ext
+    FName = Path(FName).stem  # Removes path, leaving extensionless filename
 
     # if source file in SOURCEDIR root, or doesn't come from any SOURCEDIR subdirs:
     if os.path.dirname(originalfile) == SOURCEDIR or os.path.dirname(originalfile) not in SOURCEDIR:
@@ -32,7 +32,7 @@ def NewFilePath(originalfile, SOURCEDIR, OUTPUTDIR):
         newFile = str(os.path.join(OUTPUTDIR, FName)) + '.pptx'
     else:
         # build path and filename for OUTPUTDIR subdirs
-        newFile = os.path.dirname(originalfile) #gets the folder&path the file is in
+        newFile = os.path.dirname(originalfile)  # gets the folder&path the file is in
         newFile = os.path.relpath(originalfile, SOURCEDIR)  # get relative path to source
         newFile = str(os.path.join(OUTPUTDIR, newFile, FName)) + '.pptx'  # build new path & filename
     return newFile
@@ -64,7 +64,7 @@ def DecompressToTemp(file, TEMPDIR):
     else:
         return True
 
-#Function to test Comic
+# Function to test Comic
 def CheckArchive(archive_path):
     """Check that a given archive is actually ok for reading.
     Args:
@@ -92,18 +92,18 @@ def FindNewFilename(Destination, Filename):
     NewFileName = FName + str(i) + FExt
     return NewFileName
 
-#Check if Output & Source are absolute paths
+# Check if Output & Source are absolute paths
 # if os.path.isabs(OUTPUTDIR) is False or os.path.isabs(SOURCEDIR) is False:
 #     print("CHANGE THE SOURCE OR OUTPUT")
 #     exit()
 
-#check if directory exists
+# check if directory exists
 # if os.path.exists(OUTPUTDIR) is False:  # If default folder doesn't exist
 #     os.makedirs(OUTPUTDIR)
 
-#Check size of source folder
+# Check size of source folder
 
-#Load XML
+# Load XML
 def XmlReader(comicinfo):
     try:
         fd = open(comicinfo)
@@ -113,11 +113,11 @@ def XmlReader(comicinfo):
         doc = xmltodict.parse(fd.read())
         print("Using UTF8 for encoding")
 
-    #remove crap
+    # remove crap
     XmlDelete = []
     for key in doc['ComicInfo']:
         if key[0] == "@":
-            #print(XmlDict[key])
+            # print(XmlDict[key])
             XmlDelete.append(key) # makes a list of keys to delete#######################
         if isinstance(doc['ComicInfo'][key], str) is False:
             XmlDelete.append(key)
@@ -128,10 +128,8 @@ def XmlReader(comicinfo):
     return doc['ComicInfo']
 
 
-
-
-def IsComic(Filename, COMICEXT): #is file a comic
-    #global COMICEXT
+def IsComic(Filename, COMICEXT):  # is file a comic
+    # global COMICEXT
     FName, FExt = os.path.splitext(Filename)  # Split filename and ext
     if FExt in COMICEXT:
         print('Is Comic: ' + Filename)
@@ -140,11 +138,14 @@ def IsComic(Filename, COMICEXT): #is file a comic
         print('Is Not Comic: ' + Filename)
         return False
 
+
 def Logger(String, OUTPUTDIR):
     today = date.today()
     LoggerFile = open((os.path.join(OUTPUTDIR, 'log.txt')), 'a')
     LoggerFile.write(String + " " + str(today.strftime("%d %B %Y")) + "\n")
     LoggerFile.close()
+
+
 def Examiner(String, OUTPUTDIR):
     today = date.today()
     LoggerFile = open((os.path.join(OUTPUTDIR, 'examiner.txt')), 'a')
@@ -156,23 +157,23 @@ def MoveFolders(Source, Destination):
     for entry in os.scandir(Source):
         shutil.move(entry.path, Destination)
 
-#Counts XML files in TEMPDIR, logs it
+# Counts XML files in TEMPDIR, logs it
 def XmlCheck(TEMPDIR, Filename, OUTPUTDIR):
     XmlCheck = []
     for file in os.listdir(TEMPDIR):
         if file.endswith(".xml"):
             XmlCheck.append(file)
-    if len(XmlCheck) > 1: #If there is more than one Xml file
-        Examiner('More than one Xml in ' + Filename, OUTPUTDIR)#Store XmlCheck list and current directory structure
-    #Remove crap
+    if len(XmlCheck) > 1: # If there is more than one Xml file
+        Examiner('More than one Xml in ' + Filename, OUTPUTDIR)  # Store XmlCheck list and current directory structure
+    # Remove crap
 
-#If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
+# If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
 def EmptyFolderDrop(TEMPDIR):
-    files = next(os.walk(TEMPDIR))[2] #Files in TEMPDIR, not subfolders.
-    if len(files) < 1: #if there are no files
-        folders = next(os.walk(TEMPDIR))[1] #How many folders?
-        if len(folders) == 1: #If there is one folder
-            MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR) #Move everything in this folder to TEMPDIR
+    files = next(os.walk(TEMPDIR))[2]  # Files in TEMPDIR, not subfolders.
+    if len(files) < 1:  # if there are no files
+        folders = next(os.walk(TEMPDIR))[1]  # How many folders?
+        if len(folders) == 1:  # If there is one folder
+            MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR)  # Move everything in this folder to TEMPDIR
 
 def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTPUTDIR):
     #
@@ -200,11 +201,11 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
     EmptyFolderDrop(TEMPDIR)
 
     for Foldername, Subfolders, Filenames in os.walk(TEMPDIR):
-        #print('Current folder:' + Foldername)
+        # print('Current folder:' + Foldername)
         for Filename in Filenames:
 
             if Filename in SHITLIST:
-                os.unlink(os.path.join(Foldername, Filename)) #delete file
+                os.unlink(os.path.join(Foldername, Filename))  # delete file
                 continue
 
             if FExt not in ALLOWEDEXT:
@@ -215,10 +216,10 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
                 # New Filename:
                 NewFileName = """{Extra} """ + Filename  # Adding { } so that its the end of Alphanumeric & symbol order
 
-                #print(Foldername + ' not in TEMPDIR')
+                # print(Foldername + ' not in TEMPDIR')
 
                 if os.path.isfile(os.path.join(TEMPDIR, NewFileName)):  # if file exists
-                    #print(NewFileName)
+                    # print(NewFileName)
                     NewFileName = FindNewFilename(TEMPDIR, NewFileName)  # Function to find new file name
                     # print(ComicFileName)
                     # print(Filename)
@@ -237,7 +238,7 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
                                 (os.path.join(TEMPDIR, NewFileName)))  # move to TEMPDIR
 
     FilesInComic = os.listdir(TEMPDIR)
-    #Counts how many Xml files
+    # Counts how many Xml files
     XmlCheck(TEMPDIR, Filename, OUTPUTDIR)
 
 
