@@ -44,14 +44,13 @@ class AwsLambdaPot:
             Runtime=self.runtime,
             Role=self.role,
             Handler=self.handler,
-            #Environment=DEFAULTS['environment'],
+            # Environment=DEFAULTS['environment'],
             Code={
                'ZipFile': contents
             }
         )
         os.remove(zipfile_abspath)
         return
-
 
     def delete(self):
         CLIENT.delete_function(
@@ -60,7 +59,6 @@ class AwsLambdaPot:
         return
 
     def update(self):
-
         zipfile_abspath = AwsLambdaPot.make_zip(self.function_name + '.zip', self.file_list)
         contents = open(zipfile_abspath, 'rb').read()
 
