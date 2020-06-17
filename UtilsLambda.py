@@ -90,7 +90,7 @@ def FindNewFilename(Destination, Filename):
     NewFileName = FName + str(i) + FExt
     return NewFileName
 
-#Check if Output & Source are absolute paths
+# Check if Output & Source are absolute paths
 # if os.path.isabs(OUTPUTDIR) is False or os.path.isabs(SOURCEDIR) is False:
 #     print("CHANGE THE SOURCE OR OUTPUT")
 #     exit()
@@ -100,6 +100,7 @@ def FindNewFilename(Destination, Filename):
 #     os.makedirs(OUTPUTDIR)
 
 # Check size of source folder
+
 
 # Load XML
 def XmlReader(comicinfo):
@@ -122,13 +123,10 @@ def XmlReader(comicinfo):
     for key in XmlDelete:
         del doc['ComicInfo'][key] # deletes keys
 
-
     return doc['ComicInfo']
 
 
-
-
-def IsComic(Filename, COMICEXT): #is file a comic
+def IsComic(Filename, COMICEXT):  # is file a comic
     # global COMICEXT
     FName, FExt = os.path.splitext(Filename.lower())  # Split filename and ext
     if FExt in COMICEXT:
@@ -151,7 +149,6 @@ def MoveFolders(Source, Destination):
         shutil.move(entry.path, Destination)
 
 
-
 # If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
 def EmptyFolderDrop(TEMPDIR):
     files = next(os.walk(TEMPDIR))[2] # Files in TEMPDIR, not subfolders.
@@ -159,6 +156,7 @@ def EmptyFolderDrop(TEMPDIR):
         folders = next(os.walk(TEMPDIR))[1] # How many folders?
         if len(folders) == 1: # If there is one folder
             MoveFolders(os.path.join(TEMPDIR, folders[0]), TEMPDIR) # Move everything in this folder to TEMPDIR
+
 
 def CleanFolder(TEMPDIR, ComicFileName, ALLOWEDEXT, OUTPUTDIR):
     EmptyFolderDrop(TEMPDIR)
