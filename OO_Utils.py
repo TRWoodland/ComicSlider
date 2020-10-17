@@ -52,7 +52,7 @@ class CS_Utils:
         else:
             print("Folder found: " + self.SOURCEDIR)
 
-        if self.SOURCEDIR == None and self.SUBMITTED_FILE == None:
+        if self.SOURCEDIR is None and self.SUBMITTED_FILE is None:
             print("No valid file or directory selected")
             exit()
 
@@ -166,7 +166,6 @@ class CS_Utils:
         # get original filename & ext
         filename, ext = os.path.splitext(file)  # path\file and .ext
         filename = Path(filename).stem  # Removes path, leaving extensionless filename
-        new_file = ""
 
         # if source file in SOURCEDIR root
         if os.path.dirname(file) == self.SOURCEDIR:
@@ -186,19 +185,20 @@ class CS_Utils:
             new_file = str(os.path.join(new_structure, filename)) + '.pptx'  # build new path & filename
         return new_file
 
-    # If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
+    # Drop everything down to TEMPDIR
     def empty_folder_drop(self):
-        files = next(os.walk(self.TEMPDIR))[2]  # Files in TEMPDIR, not subfolders.
-        if len(files) < 1:  # if there are no files
-            folders = next(os.walk(self.TEMPDIR))[1]  # How many folders?
-            if len(folders) == 1:  # If there is one folder
-                for entry in os.scandir(os.path.join(self.TEMPDIR, folders[0])): # Move everything in this folder to TEMPDIR
-                    shutil.move(entry.path, self.TEMPDIR)
+        # move files
+        for dirpath, dirname, filename in os.walk(self.TEMPDIR):
+            for f in filename:
+                newfilename = self.find_new_filename(self.TEMPDIR, f)  # checks filename is new
 
+                print("Moving: " + (os.path.join(dirpath, f)) + "\nTo:" + os.path.join(self.TEMPDIR, newfilename))
+                shutil.move(os.path.join(dirpath, f), os.path.join(self.TEMPDIR, newfilename))  # move and rename file
+        # delete subdirs
+        for dirname in next(os.walk(self.TEMPDIR))[1]:
+            print("Deleting subdir: " + os.path.join(self.TEMPDIR, dirname))
+            shutil.rmtree(os.path.join(self.TEMPDIR, dirname))
 
-    def MoveFolders(self, Source, Destination):
-        for entry in os.scandir(Source):
-            shutil.move(entry.path, Destination)
 
 """ TEST AREA!!! """
 bob = 1
