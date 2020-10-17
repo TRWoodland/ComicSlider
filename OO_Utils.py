@@ -142,7 +142,7 @@ class CS_Utils:
             print("New filename found:" + filename)
         return filename
 
-    def xmlreader(self, comicinfo):
+    def xml_reader(self, comicinfo):
         try:
             fd = open(comicinfo)
             doc = xmltodict.parse(fd.read())
@@ -150,7 +150,6 @@ class CS_Utils:
             fd = open(comicinfo, encoding="utf8")
             doc = xmltodict.parse(fd.read())
             print("Using UTF8 for encoding")
-
         # remove crap
         XmlDelete = []
         for key in doc['ComicInfo']:
@@ -169,10 +168,8 @@ class CS_Utils:
         filename = Path(filename).stem  # Removes path, leaving extensionless filename
         new_file = ""
 
-        # if source file in SOURCEDIR root, or doesn't come from any SOURCEDIR subdirs:
-        if os.path.dirname(file) == self.SOURCEDIR or \
-                os.path.dirname(file) not in self.SOURCEDIR:
-
+        # if source file in SOURCEDIR root
+        if os.path.dirname(file) == self.SOURCEDIR:
             # build new path & filename for OUTPUTDIR root file
             new_file = str(os.path.join(self.OUTPUTDIR, filename)) + '.pptx'
         else:
@@ -181,21 +178,34 @@ class CS_Utils:
             relative_path = os.path.relpath(os.path.dirname(file), self.SOURCEDIR)  # get relative path to source
             dir_list = relative_path.split(os.sep) # make list of folders
             new_structure = self.OUTPUTDIR
-                for folder in dir_list:
-                    if not os.path.exists(os.path.join(new_structure, folder)):  # if output\\folder doesn't exist
-                        os.mkdir(os.path.join(new_structure, folder))            # make it
-                    newstructure = os.path.join(new_structure, folder)           # update new_structure string
-
+            for folder in dir_list:
+                if not os.path.exists(os.path.join(new_structure, folder)):  # if output\\folder doesn't exist
+                    os.mkdir(os.path.join(new_structure, folder))            # make it
+                new_structure = os.path.join(new_structure, folder)
+                print(new_structure)  # update new_structure string
             new_file = str(os.path.join(new_structure, filename)) + '.pptx'  # build new path & filename
         return new_file
 
+    # If TEMPDIR has no files but 1 folder, bring everything from folder to TEMPDIR
+    def empty_folder_drop(self):
+        files = next(os.walk(self.TEMPDIR))[2]  # Files in TEMPDIR, not subfolders.
+        if len(files) < 1:  # if there are no files
+            folders = next(os.walk(self.TEMPDIR))[1]  # How many folders?
+            if len(folders) == 1:  # If there is one folder
+                for entry in os.scandir(os.path.join(self.TEMPDIR, folders[0])): # Move everything in this folder to TEMPDIR
+                    shutil.move(entry.path, self.TEMPDIR)
 
 
+    def MoveFolders(self, Source, Destination):
+        for entry in os.scandir(Source):
+            shutil.move(entry.path, Destination)
 
 """ TEST AREA!!! """
 bob = 1
 if bob != 1:
     from OO_Utils import CS_Utils
+
+    file = r"""F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\7. Marvel Zombies Return\8. Marvel Zombies 3\Marvel Zombies 3 V2008 #1 (of 4) (2008).cbz"""
     OUTPUTDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\ProcessedComics'''
     SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'''
     SUBMITTED_FILE = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\Test.zip'''
