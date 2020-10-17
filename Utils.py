@@ -123,8 +123,6 @@ def XmlReader(comicinfo):
             XmlDelete.append(key)
     for key in XmlDelete:
         del doc['ComicInfo'][key] # deletes keys
-
-
     return doc['ComicInfo']
 
 
@@ -208,7 +206,7 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
                 os.unlink(os.path.join(Foldername, Filename))  # delete file
                 continue
 
-            if FExt not in ALLOWEDEXT:
+            if Filename[-4:].lower() not in ALLOWEDEXT:
                 Logger(ComicFileName + " Deleting file because wrong extension: " + os.path.join(Foldername, Filename), OUTPUTDIR)
                 print('Deleting: ' + os.path.join(Foldername, Filename))
                 os.unlink(os.path.join(Foldername, Filename))  # deleting file because wrong extension
@@ -240,5 +238,7 @@ def CleanFolder(TEMPDIR, ComicFileName, SHITLIST, EXAMINERLIST, ALLOWEDEXT, OUTP
     FilesInComic = os.listdir(TEMPDIR)
     # Counts how many Xml files
     XmlCheck(TEMPDIR, Filename, OUTPUTDIR)
+
+
 
 

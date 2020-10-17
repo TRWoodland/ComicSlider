@@ -1,7 +1,8 @@
 # require libraries pip install rarfile xmltodict patool, Pillow
 import os
 import shutil
-import time
+import time  # for sleep
+from datetime import datetime
 import argparse  # allows input by commandline
 import tempfile
 import logging
@@ -27,7 +28,7 @@ else:
 #         print("ComicSliderGui is running")
 
 # logging
-today = date.today()
+today = datetime.today()
 today.strftime("%d %B %Y")  # pretty string
 global loggerfile
 loggerfile = 'ComicSlider' + today.strftime("%d%B%Y") + '.txt'
@@ -37,6 +38,7 @@ logging.warning('started')
 
 SHITLIST = ['zThe-Hand.jpg']
 IMAGEEXT = ['.jpg','.jpeg', 'gif', 'png', 'bmp', 'tiff']
+
 OTHEREXT = ['.xml', 'txt', 'text']
 COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
 ALLOWEDEXT = IMAGEEXT + OTHEREXT
@@ -81,7 +83,7 @@ if args.filename:  # arg given, do this
         print("File doesn't exist")
         exit()
     if not os.path.isabs(args.filename):  # If file doesn't have a complete path
-        print("File doesn't have a complete path: "  + args.filename)
+        print("File doesn't have a complete path: " + args.filename)
     else:
         print("File Found: " + args.filename)
 
@@ -113,12 +115,12 @@ def RemakeFolderStructure(SOURCEDIR, OUTPUTDIR):
     for Foldername, Subfolders, Filenames in os.walk(SOURCEDIR):
          NewFolder(Foldername, SOURCEDIR, OUTPUTDIR)
 
-def NewFolder(Foldername, SOURCEDIR, OUTPUTDIR):
-    if os.path.exists(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR))):  # Does Current Folder exist in new location
-        print(Foldername + 'Folder Exists in OUTPUTDIR!')
+def NewFolder(foldername, SOURCEDIR, OUTPUTDIR):
+    if os.path.exists(os.path.join(OUTPUTDIR, os.path.relpath(foldername, SOURCEDIR))):  # Does Current Folder exist in new location
+        print(foldername + 'Folder Exists in OUTPUTDIR!')
     else:
-        os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(Foldername, SOURCEDIR)))  # Create folder
-        print(Foldername + ' created in OUTPUTDIR!')
+        os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(foldername, SOURCEDIR)))  # Create folder
+        print(foldername + ' created in OUTPUTDIR!')
 
 
 # FILE
@@ -152,13 +154,16 @@ def ConvertComic(file, COMICEXT):
 
     # Get dimensions of first image
     width, height = FirstImageDimensions(TEMPDIR)  # in inches
-
+    print(width, height)
     prs = MakePresentation(width, height)
 
     # Check XML exists
     XmlDict = {}
     if os.path.isfile(os.path.join(TEMPDIR, 'ComicInfo.xml')):  # If ComicInfo exists
+        print("ComicInfo.xml exists")
         XmlDict = XmlReader(os.path.join(TEMPDIR, 'ComicInfo.xml'))
+    else:
+        print("ComicInfo.xml not found. Continuing")
 
     # Separate Summary
     SummaryDict = {}

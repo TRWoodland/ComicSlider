@@ -66,6 +66,7 @@ def FirstImageDimensions(TEMPDIR):
         FName, FExt = os.path.splitext(file)
         if FExt.lower() == '.jpg':
             width, height = GetImageDimensionsInches(os.path.join(TEMPDIR, file))
+            print(file, width, height)
             return width, height
 
 
