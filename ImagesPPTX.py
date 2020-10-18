@@ -1,6 +1,5 @@
 from PIL import Image
 from Utils import FindNewFilename, DoesNewFileExist, NewFilePath
-
 import os
 import time
 from PIL import Image

@@ -43,4 +43,10 @@ if args.filename is None and args.foldername is None:  # if arg not given, do th
     print("no arg given")
     exit()
 
-
+if os.environ.get("AWS_EXECUTION_ENV") is None:  # test whether on AWS Lambda
+    AWS = False
+    print("Not running on AWS Lambda")
+else:
+    AWS = True
+    print("on aws. Script not configured for AWS yet")
+    exit()
