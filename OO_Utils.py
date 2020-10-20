@@ -348,29 +348,3 @@ class CS_Utils:
             return self.FAILED_LIST
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Remake Folder Structure in SOURCEDIR to OUTPUTDIR
-# def RemakeFolderStructure(SOURCEDIR, OUTPUTDIR):
-#     for Foldername, Subfolders, Filenames in os.walk(SOURCEDIR):
-#          NewFolder(Foldername, SOURCEDIR, OUTPUTDIR)
-#
-# def NewFolder(foldername, SOURCEDIR, OUTPUTDIR):
-#     if os.path.exists(os.path.join(OUTPUTDIR, os.path.relpath(foldername, SOURCEDIR))):  # Does Current Folder exist in new location
-#         print(foldername + 'Folder Exists in OUTPUTDIR!')
-#     else:
-#         os.mkdir(os.path.join(OUTPUTDIR, os.path.relpath(foldername, SOURCEDIR)))  # Create folder
-#         print(foldername + ' created in OUTPUTDIR!')
-

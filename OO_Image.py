@@ -23,26 +23,7 @@ class CS_Image:
 
         """ END OF INIT """
 
-    # Ensure .jpgs & rotate landscapes
-    def process_images(TEMPDIR, image_ext):
-        for file in next(os.walk(TEMPDIR))[2]:  # files in TEMPDIR
-            FName, FExt = os.path.splitext(file)
-            if FExt in image_ext:  # if file is image
-                if not FExt.lower() == '.jpg':  # if file is not jpg
-                    convert_to_jpg(TEMPDIR, file)
-
-                # Check orientation
-                rotate_to_portrait(os.path.join(TEMPDIR, file))
-                # allPageDimensions.update(GetImageDimensionsInches(os.path.join(TEMPDIR, file))) #should add new k&v to dict
-                # width, height = GetImageDimensionsInches((os.path.join(TEMPDIR, file)))
-                # if width > maxwidth:
-                #     maxwidth = width
-                # if height > maxheight:
-                #     maxheight = height
-        # print("maxheight " + str(maxheight) + "maxwidth " + str(maxwidth))
-        return True
-
-    # Convert images to jpg
+    """Convert images to jpg"""
     def convert_to_jpg(self, file, output_file=""):  # remember to pass TEMPDIR + FILE
         if output_file == "":
             output_file == file
@@ -53,7 +34,7 @@ class CS_Image:
         print("File conversion complete")
         # os.unlink(os.path.join(self.TEMPDIR, file))  # delete original
 
-    # Rotate Images to portrait
+    """Rotate Images to portrait"""
     def rotate_to_portrait(self, file):
         comicPage = Image.open(file)
         # Check page is portrait
@@ -71,16 +52,16 @@ class CS_Image:
             # print(width, height)
             comicPage.close()
 
-    # Returns dimensions for first .jpg in folder
+    """Returns dimensions for first .jpg in folder"""
     def first_image_dimensions(self, TEMPDIR):
         for file in next(os.walk(TEMPDIR))[2]:
             FName, FExt = os.path.splitext(file)
             if FExt.lower() == '.jpg':
-                width, height = get_image_dimensions_inches(os.path.join(self.TEMPDIR, file))
+                width, height = self.get_image_dimensions_inches(os.path.join(self.TEMPDIR, file))
                 print(file, width, height)
                 return width, height
 
-    # Returns dimensions for provided file in inches
+    """Returns dimensions for provided file in inches"""
     def get_image_dimensions_inches(self, file):
         comicPage = Image.open(file)
         width, height = 0, 0

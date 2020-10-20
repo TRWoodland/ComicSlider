@@ -26,12 +26,12 @@ if not args.outputfolder or not os.path.exists(args.outputfolder):  # if no outp
     print("No output folder given or incomplete path")
     exit()
 
-if args.filename:  # arg given, do this
+if args.filename:                                   # filename given, do this
     print("Filename given: " + args.filename)
-    if not os.path.isfile(args.filename):
+    if not os.path.isfile(args.filename):           # if file doesn't exist
         print("File doesn't exist")
         exit()
-    if not os.path.isabs(args.filename):  # If file doesn't have a complete path
+    if not os.path.isabs(args.filename):            # If file doesn't have a complete path
         print("File doesn't have a complete path: " + args.filename)
     else:
         print("File Found: " + args.filename)
