@@ -6,7 +6,7 @@ import patoolib
 import xmltodict
 from datetime import date
 from pathlib import Path
-from OO_Image import CS_Image
+from Comic_Slider_Image_OO import CS_Image
 
 class CS_Utils:
     def __init__(self, SUBMITTED_FILE="", SOURCEDIR="", OUTPUTDIR="", AWS=False):

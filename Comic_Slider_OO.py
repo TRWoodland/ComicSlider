@@ -1,7 +1,7 @@
 # require libraries pip install rarfile xmltodict patool, Pillow
 import os
 import argparse  # allows input by commandline
-from OO_Utils import CS_Utils
+from Comic_Slider_Utils_OO import CS_Utils
 
 failed_list = []
 
