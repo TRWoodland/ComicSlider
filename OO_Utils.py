@@ -259,7 +259,7 @@ class CS_Utils:
                 if file in self.SHITLIST:
                     os.unlink(os.path.join(self.TEMPDIR, file))
 
-                if ext not in self.ALLOWEDEXT:
+                if ext.lower() not in self.ALLOWEDEXT:
                     print("Deleting file because wrong extension: " + file)
                     os.unlink(os.path.join(self.TEMPDIR, file))
 
@@ -324,6 +324,11 @@ class CS_Utils:
                 print("XML info found in: " + str(self.XML_FILE))
             else:
                 print("No XML info found")
+
+            if len(page_list) == 0:
+                print("No pages in comic")
+                self.FAILED_LIST = "No pages in comic"
+                return self.FAILED_LIST
 
             """ BUILD PPTX """
             # TODO: Bigger font on bigger inches

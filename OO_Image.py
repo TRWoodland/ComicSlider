@@ -76,7 +76,7 @@ class CS_Image:
         for file in next(os.walk(TEMPDIR))[2]:
             FName, FExt = os.path.splitext(file)
             if FExt.lower() == '.jpg':
-                width, height = GetImageDimensionsInches(os.path.join(TEMPDIR, file))
+                width, height = get_image_dimensions_inches(os.path.join(self.TEMPDIR, file))
                 print(file, width, height)
                 return width, height
 

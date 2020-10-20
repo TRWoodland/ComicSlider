@@ -1,17 +1,7 @@
 # require libraries pip install rarfile xmltodict patool, Pillow
 import os
-import shutil
-import time  # for sleep
-from datetime import datetime
 import argparse  # allows input by commandline
-import tempfile
-import logging
-from sys import platform
-import shutil
 from OO_Utils import CS_Utils
-from OO_Image import CS_Image
-from pathlib import Path
-
 
 failed_list = []
 
@@ -85,25 +75,9 @@ if args.filename is None and args.sourcefolder is None:  # if arg not given, do 
     print("No file or source folder given")
     exit()
 
+""" # TODO: """
 
-""" TEST AREA!!! """
-
-
-
-
-#
-# print("Run test? y?")
-# runtest = input()
-# if runtest.lower() == "y":
-#     #from OO_Utils import CS_Utils
-#
-#     OUTPUTDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\ProcessedComics'''
-#
-#
-#     #SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'''
-#     SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'''
-#     # SUBMITTED_FILE = r"""F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\7. Marvel Zombies Return\8. Marvel Zombies 3\Marvel Zombies 3 V2008 #1 (of 4) (2008).cbz"""
-#     SUBMITTED_FILE = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\7. Marvel Zombies Return\8. Marvel Zombies 3\Test.zip'''
-#     test = CS_Utils(SUBMITTED_FILE=SUBMITTED_FILE, SOURCEDIR=SOURCEDIR, OUTPUTDIR=OUTPUTDIR, AWS=False)
-#     test.start_the_process()
-
+# TODO: Functions return their current True/False, but also what failed. Store in list
+# TODO: Think about reintroducing the Logger module
+# TODO: Add check for "File Already Exists" before process starts. Add Ignore.  Overwrite. Overwrite All. Ignore All.
+# TODO: Code Review!
