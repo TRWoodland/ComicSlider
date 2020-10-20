@@ -25,7 +25,7 @@ class CS_Utils:
         self.XML_FILE = None
 
         self.COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
-        self.FAILED_LIST = []
+        self.FAILED_LIST = ''
         self.EXAMINERLIST = ['.mp4', '.mpg', '.avi', '.mov', '.flv', '.mpeg', '.mp3', '.mpa', '.doc', '.docx', '.wav',
                              '.flac', '.ogg', '.zip', '.rar', '.cbr', '.cbz', '.7z', '.pdf']
 
@@ -67,7 +67,8 @@ class CS_Utils:
                 exit()
             if not os.path.exists(self.OUTPUTDIR):
                 print("Failed to create OUTPUTDIR" + str(self.OUTPUTDIR))
-                exit()
+                self.FAILED_LIST = "Failed to create OUTPUTDIR" + str(self.OUTPUTDIR)
+                return self.FAILED_LIST
             print("Found OUTPUTDIR: " + str(self.OUTPUTDIR))
 
         #self.start_the_process()
@@ -97,9 +98,9 @@ class CS_Utils:
 
     def get_size(self, folder_source):
         total_size = 0
-        for dirpath, dirnames, filenames in os.walk(folder_source):
-            for f in filenames:
-                fp = os.path.join(dirpath, f)
+        for dirpath, dirnames, files in os.walk(folder_source):
+            for file in files:
+                fp = os.path.join(dirpath, file)
                 # skip if it is symbolic link
                 if not os.path.islink(fp):
                     total_size += os.path.getsize(fp)
@@ -131,11 +132,10 @@ class CS_Utils:
             patoolib.extract_archive(archive=os.path.join(file), verbosity=0, outdir=self.TEMPDIR)
         except Exception as e:
             print('Decompression failed. Exception Thrown: ' + str(e))
+
             return False
         else:
             return True
-
-
 
     def find_new_filename(self, destination, file):
         print("----------------------file")
@@ -185,6 +185,10 @@ class CS_Utils:
             relative_path = os.path.relpath(os.path.dirname(file), self.SOURCEDIR)  # get relative path to source
             dir_list = relative_path.split(os.sep) # make list of folders
             new_structure = self.OUTPUTDIR
+            print("file" + file)
+            print("relative_path" + relative_path)
+            print("dir_list" + str(dir_list))
+            print("new_structure" + new_structure)
             for folder in dir_list:
                 if not os.path.exists(os.path.join(new_structure, folder)):  # if output\\folder doesn't exist
                     os.mkdir(os.path.join(new_structure, folder))            # make it
@@ -196,12 +200,12 @@ class CS_Utils:
     # Drop everything down to TEMPDIR
     def empty_folder_drop(self):
         # move files
-        for dirpath, dirname, filename in os.walk(self.TEMPDIR):
-            for f in filename:
-                newfilename = self.find_new_filename(self.TEMPDIR, f)  # checks filename is new
+        for dirpath, dirname, files in os.walk(self.TEMPDIR):
+            for file in files:
+                newfilename = self.find_new_filename(self.TEMPDIR, file)  # checks filename is new
 
-                print("Moving: " + (os.path.join(dirpath, f)) + "\nTo:" + os.path.join(self.TEMPDIR, newfilename))
-                shutil.move(os.path.join(dirpath, f), os.path.join(self.TEMPDIR, newfilename))  # move and rename file
+                print("Moving: " + (os.path.join(dirpath, file)) + "\nTo:" + os.path.join(self.TEMPDIR, newfilename))
+                shutil.move(os.path.join(dirpath, file), os.path.join(self.TEMPDIR, newfilename))  # move and rename file
         # delete subdirs
         for dirname in next(os.walk(self.TEMPDIR))[1]:
             print("Deleting subdir: " + os.path.join(self.TEMPDIR, dirname))
@@ -212,31 +216,34 @@ class CS_Utils:
             prs = """FINAL RESULT"""
             # If false, not comic
             if not self.is_comic(self.SUBMITTED_FILE):
-                self.FAILED_LIST.append(self.SUBMITTED_FILE)
+                self.FAILED_LIST = "Not Comic: " + self.SUBMITTED_FILE
                 print("File does not have comic extension: " + self.SUBMITTED_FILE)
                 return False
             else:
                 print("Has comic extension. Testing archive for corruption")
                 if not self.check_archive(self.SUBMITTED_FILE):
                     print('CorruptArchive: ' + self.SUBMITTED_FILE)
-                    self.FAILED_LIST.append(self.SUBMITTED_FILE)
+                    self.FAILED_LIST = 'CorruptArchive: ' + self.SUBMITTED_FILE
                     return False
                 else:
                     print("Archive tested successfully")
 
             # Clear Temp Folder
             self.empty_temp()
+
+            # Decompress file to temp
             if not self.decompress_to_temp(self.SUBMITTED_FILE):
-                self.FAILED_LIST.append(self.SUBMITTED_FILE)
+                self.FAILED_LIST = "Failed to decompress: " + self.SUBMITTED_FILE
                 print('Failed to decompress: ' + self.SUBMITTED_FILE)
-                return False
+                return self.FAILED_LIST
             else:
                 print('Good decompress')
 
             # Move all files to root folder, remove subdirs.
             self.empty_folder_drop()
 
-            # ComicInfo.xml & Remove unwanted files
+            """ ComicInfo.xml & Remove unwanted files """
+
             files = next(os.walk(self.TEMPDIR))[2]
 
             if "ComicInfo.xml" in files:
@@ -246,11 +253,11 @@ class CS_Utils:
             """ FILE STUFF """
 
             for file in files:
-                if file in self.SHITLIST:
-                    os.unlink(os.path.join(self.TEMPDIR, file))
-
                 filename, ext = os.path.splitext(file)  # path\file and .ext
                 filename = Path(filename).stem  # Removes path, leaving extensionless filename
+
+                if file in self.SHITLIST:
+                    os.unlink(os.path.join(self.TEMPDIR, file))
 
                 if ext not in self.ALLOWEDEXT:
                     print("Deleting file because wrong extension: " + file)
@@ -261,45 +268,79 @@ class CS_Utils:
                     print("Renaming jpeg tp jpg: " + file + " to " + newfilename)
                     os.rename(os.path.join(self.TEMPDIR, file), os.path.join(self.TEMPDIR, newfilename))
 
-                # XML STUFF
-                if self.XML_FILE is None:   # if no xml file is yet set
-                    if ext == ".xml":        # if an ext is xml
+                """ XML STUFF """
+                if self.XML_FILE is None:                           # if no xml file is yet found
+                    if ext == ".xml":                               # if an ext is xml
                         print("Attempting to load XML metadata from: " + file)
                         self.XML_FILE = os.path.join(self.TEMPDIR, file)
-                xml_dict = self.xml_reader(self.XML_FILE)
-                # Separate Summary
-                summary_dict = {}
-                if 'Summary' in xml_dict:
-                    summary_dict['Summary'] = xml_dict['Summary']
-                    del xml_dict['Summary']
 
+                if self.XML_FILE is not None:                       # if an XML file was found
+                    xml_dict = self.xml_reader(self.XML_FILE)       # extract the metadata
+                    summary_dict = {}                               # Separate the Summary
+                    if 'Summary' in xml_dict:
+                        summary_dict['Summary'] = xml_dict['Summary']
+                        del xml_dict['Summary']
 
-            # see whats left
-            files = next(os.walk(self.TEMPDIR))[2]
-            print("Files: " + str(len(files)))
+            """ IMAGE CONVERSION """
+            files = next(os.walk(self.TEMPDIR))[2]  # update files list
+            csimage = CS_Image(TEMPDIR=self.TEMPDIR)  # image tools
 
-
-            """ IMAGE AND PPTX """
-
-            csimage = CS_Image(TEMPDIR=self.TEMPDIR)
             for file in files:
                 filename, ext = os.path.splitext(file)  # path\file and .ext
                 filename = Path(filename).stem  # Removes path, leaving extensionless filename
 
-                if ext.lower() in self.IMAGECONV:        # if its an image to convert and its not a jpg
-                    if filename + '.jpg' in files:  # if the converted filename exists
-                        newfilename = self.find_new_filename(self.TEMPDIR, filename + '.jpg')
+                if ext.lower() in self.IMAGECONV:                       # if its an image to convert and its not a jpg
+                    if filename + '.jpg' in files:                              # if the converted filename exists
+                        newfilename = self.find_new_filename(self.TEMPDIR, filename + '.jpg')   # generate new fn
                         csimage.convert_to_jpg(os.path.join(self.TEMPDIR, file),
-                                               os.path.join(self.TEMPDIR, newfilename))  # input, output
+                                               os.path.join(self.TEMPDIR, newfilename))     # input, output
+                        os.unlink(os.path.join(self.TEMPDIR, file))                                       # delete original
                     else:
-                        csimage.convert_to_jpg(os.path.join(self.TEMPDIR, file),
-                                               filename + '.jpg')  # input, output
-            # TODO: RELOAD FILES IN DIR. ROTATE!
-            #
-            # pages!
+                        csimage.convert_to_jpg(os.path.join(self.TEMPDIR, file), filename + '.jpg')  # input, output
+
+            """ ROTATE, WIDTH, HEIGHT, COUNT"""
+
+            files = next(os.walk(self.TEMPDIR))[2]  # update files list
             page_list = []
-            if ext.lower() == '.jpg':  # TODO: JPEG. After Conversion
-                page_list.append(file)
+            current_width, current_height, width, height = 0, 0, 0, 0
+
+            for file in files:
+                filename, ext = os.path.splitext(file)  # path\file and .ext
+                filename = Path(filename).stem  # Removes path, leaving extensionless filename
+
+                if ext.lower() == '.jpg':
+                    csimage.rotate_to_portrait(os.path.join(self.TEMPDIR, file))
+                    page_list.append(os.path.join(self.TEMPDIR, file))
+
+                    current_width, current_height = csimage.get_image_dimensions_inches(os.path.join(self.TEMPDIR, file))
+                    if current_width > width:
+                        width = current_width
+                    if current_height > height:
+                        height = current_height
+
+            print("No of Pages: " + str(len(page_list)) +
+                  "\nExtra files found: " + str((len(files) - len(page_list))))
+            if self.XML_FILE is not None:
+                print("XML info found in: " + str(self.XML_FILE))
+            else:
+                print("No XML info found")
+
+            """ BUILD PPTX """
+            # TODO: Bigger font on bigger inches
+            prs = csimage.make_presentation(width, height)
+            for page in page_list:
+                prs = csimage.add_slide(prs, os.path.join(self.TEMPDIR, page))
+                if page == page_list[0]:                                    # if current page is the cover
+                    if self.XML_FILE is not None:                           # if an XML file was found
+                        prs = csimage.add_xml_slide(prs, xml_dict)          # Create Main Metadata page
+                    if "summary_dict" in locals():                          # If Summary dict exists in variables
+                        if 'Summary' in summary_dict:                       # and contains Summary
+                            prs = csimage.add_xml_slide(prs, summary_dict)      # Create Summary page
+
+            """ SAVE PPTX """
+            new_pptx_folder_and_filename = self.new_file_path(self.SUBMITTED_FILE)
+            csimage.save_pptx(prs, new_pptx_folder_and_filename)
+            return self.FAILED_LIST
 
 
 
@@ -312,21 +353,6 @@ class CS_Utils:
 
 
 
-""" TEST AREA!!! """
-print("Run test? y?")
-runtest = input()
-if runtest.lower() == "y":
-    #from OO_Utils import CS_Utils
-
-    OUTPUTDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\ProcessedComics'''
-
-
-    #SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics'''
-    SOURCEDIR = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\empty'''
-    # SUBMITTED_FILE = r"""F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\7. Marvel Zombies Return\8. Marvel Zombies 3\Marvel Zombies 3 V2008 #1 (of 4) (2008).cbz"""
-    SUBMITTED_FILE = r'''F:\Google Drive\Synced\PythonProjects\ComicSlider\Comics\Test.zip'''
-    test = CS_Utils(SUBMITTED_FILE=SUBMITTED_FILE, SOURCEDIR=SOURCEDIR, OUTPUTDIR=OUTPUTDIR, AWS=False)
-    test.start_the_process()
 
 
 
