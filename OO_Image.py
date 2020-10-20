@@ -1,5 +1,3 @@
-from PIL import Image
-
 import os
 import time
 from PIL import Image
