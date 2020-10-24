@@ -4,9 +4,10 @@ import shutil
 import tempfile
 import patoolib
 import xmltodict
-from datetime import date
 from pathlib import Path
 from Comic_Slider_Image_OO import CS_Image
+from Comic_Slider_Logger_OO import CS_Logfile
+
 
 class CS_Utils:
     def __init__(self, SUBMITTED_FILE="", SOURCEDIR="", OUTPUTDIR="", AWS=False):
@@ -16,7 +17,7 @@ class CS_Utils:
         self.OUTPUTDIR = OUTPUTDIR
         self.AWS = AWS
 
-        # self.OTHEREXT = ['.xml', 'txt', 'text']  # if I decide to make a page of text files
+        self.OTHEREXT = ['.xml', 'txt', 'text']  # if I decide to make a page of text files
         self.OTHEREXT = ['.xml']
         self.IMAGEEXT = ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tif', '.tiff']
         self.IMAGECONV = ['.gif', '.png', '.bmp', '.tif', '.tiff']
@@ -25,7 +26,6 @@ class CS_Utils:
         self.XML_FILE = None
 
         self.COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
-        self.FAILED_LIST = ''
         self.EXAMINERLIST = ['.mp4', '.mpg', '.avi', '.mov', '.flv', '.mpeg', '.mp3', '.mpa', '.doc', '.docx', '.wav',
                              '.flac', '.ogg', '.zip', '.rar', '.cbr', '.cbz', '.7z', '.pdf']
 
@@ -49,50 +49,59 @@ class CS_Utils:
             self.SOURCEDIR = os.path.abspath(self.SOURCEDIR)
         if not os.path.exists(self.SOURCEDIR):  # if folder doesn't exist
             print("Source folder does not exist")
+            self.logfile.log_error("Source folder does not exist: " + str(self.SOURCEDIR))
             self.SOURCEDIR = False
         else:
             print("Folder found: " + self.SOURCEDIR)
 
         if self.SOURCEDIR is None and self.SUBMITTED_FILE is None:
             print("No valid file or directory selected")
+            self.logfile.log_error("No valid file or directory selected: " +
+                                   str(self.SOURCEDIR) + str(self.SUBMITTED_FILE))
             exit()
 
         # Output
         if self.SOURCEDIR != "":
             self.SOURCEDIR = os.path.abspath(self.SOURCEDIR)
         if not os.path.exists(self.OUTPUTDIR):  # if folder doesn't exist
-            print("Create directory?" + str(self.OUTPUTDIR))
-            userentry = input()
-            if userentry.lower() == "n":
-                exit()
-            if not os.path.exists(self.OUTPUTDIR):
-                print("Failed to create OUTPUTDIR" + str(self.OUTPUTDIR))
-                self.FAILED_LIST = "Failed to create OUTPUTDIR" + str(self.OUTPUTDIR)
-                return self.FAILED_LIST
+            print("Output folder doesn't exist: " + str(self.OUTPUTDIR))
+            self.logfile.log_error("Output folder doesn't exist: " + str(self.OUTPUTDIR))
+        else:
             print("Found OUTPUTDIR: " + str(self.OUTPUTDIR))
 
-        #self.start_the_process()
         """ END OF INIT """
+    def __repr__(self):
+        return f"CS_Utils obj opperating on: {self.SUBMITTED_FILE}," \
+               f"\n Source folder: {self.SOURCEDIR}" \
+               f"\n Output folder: {self.OUTPUTDIR}" \
+               f"\n Using Temp folder: {self.TEMPDIR}"
+        """ END OF REPR """
+
 
     def empty_temp(self):
-        if os.path.exists(self.TEMPDIR):  # makes sure Temp is empty
-            shutil.rmtree(self.TEMPDIR)
-            print("Deleting Temp Dir: " + self.TEMPDIR)
-            time.sleep(2)
-            try:
-                os.mkdir(self.TEMPDIR)
-                print("Remaking Temp Dir: " + self.TEMPDIR)
-            except PermissionError:
-                print('Too quick to remake folder')
-                exit()
+        if os.path.exists(self.TEMPDIR):    # if tempdir exists
+            while os.path.exists(self.TEMPDIR):     # while tempdir exists
+                shutil.rmtree(self.TEMPDIR)     # delete tempdir
+                print("Deleting Temp Dir: " + self.TEMPDIR)
+
+            if not os.path.exists(self.TEMPDIR):     # if tempdir doesn't exist'
+                while not os.path.exists(self.TEMPDIR):  # while tempdir doesn't exist
+                    try:
+                        os.mkdir(self.TEMPDIR)
+                        print("Remaking Temp Dir: " + self.TEMPDIR)
+                    except PermissionError:
+                        self.logfile.log_error("Too quick to remake folder: " + self.TEMPDIR)
+                        print('Too quick to remake folder')
+                        time.sleep(1)
 
     def is_comic(self, file):  # is file a comic
         filename, ext = os.path.splitext(file)  # path\file and .ext
-        filename = Path(filename).stem  # Removes path, leaving extensionless filename
+        # filename = Path(filename).stem  # Removes path, leaving extensionless filename
         if ext.lower() in self.COMICEXT:
             print('Is Comic: ' + file)
             return True
         else:
+            self.logfile.log_error('Is Not Comic: ' + file)
             print('Is Not Comic: ' + file)
             return False
 
@@ -123,6 +132,7 @@ class CS_Utils:
             patoolib.test_archive(archive_path, verbosity=-1)
         except Exception as e:
             print('Exception Thrown: ' + str(e))
+            self.logfile.log_error("Corrupt archive: " + self.SUBMITTED_FILE)
             return False
         else:
             return True
@@ -132,7 +142,7 @@ class CS_Utils:
             patoolib.extract_archive(archive=os.path.join(file), verbosity=0, outdir=self.TEMPDIR)
         except Exception as e:
             print('Decompression failed. Exception Thrown: ' + str(e))
-
+            self.logfile.log_error('Decompression failed. Exception Thrown: ' + file + str(e))
             return False
         else:
             return True
@@ -183,7 +193,7 @@ class CS_Utils:
             # build path and filename for OUTPUTDIR subdirs
             # os.path.dirname(self.SUBMITTED_FILE)  # gets the folder&path the file is in
             relative_path = os.path.relpath(os.path.dirname(file), self.SOURCEDIR)  # get relative path to source
-            dir_list = relative_path.split(os.sep) # make list of folders
+            dir_list = relative_path.split(os.sep)  # make list of folders
             new_structure = self.OUTPUTDIR
             print("file" + file)
             print("relative_path" + relative_path)
@@ -205,25 +215,27 @@ class CS_Utils:
                 newfilename = self.find_new_filename(self.TEMPDIR, file)  # checks filename is new
 
                 print("Moving: " + (os.path.join(dirpath, file)) + "\nTo:" + os.path.join(self.TEMPDIR, newfilename))
-                shutil.move(os.path.join(dirpath, file), os.path.join(self.TEMPDIR, newfilename))  # move and rename file
+                shutil.move(os.path.join(dirpath, file), os.path.join(self.TEMPDIR, newfilename))  # move and rename
         # delete subdirs
         for dirname in next(os.walk(self.TEMPDIR))[1]:
             print("Deleting subdir: " + os.path.join(self.TEMPDIR, dirname))
             shutil.rmtree(os.path.join(self.TEMPDIR, dirname))
 
     def start_the_process(self):
-        if self.SUBMITTED_FILE != False:
-            prs = """FINAL RESULT"""
+        self.logfile = CS_Logfile()  # Logger!
+
+        if self.SUBMITTED_FILE:
+
             # If false, not comic
             if not self.is_comic(self.SUBMITTED_FILE):
-                self.FAILED_LIST = "Not Comic: " + self.SUBMITTED_FILE
                 print("File does not have comic extension: " + self.SUBMITTED_FILE)
+                self.logfile.log_error("File does not have comic extension: " + self.SUBMITTED_FILE)
                 return False
             else:
                 print("Has comic extension. Testing archive for corruption")
                 if not self.check_archive(self.SUBMITTED_FILE):
                     print('CorruptArchive: ' + self.SUBMITTED_FILE)
-                    self.FAILED_LIST = 'CorruptArchive: ' + self.SUBMITTED_FILE
+                    self.logfile.log_error('CorruptArchive: ' + self.SUBMITTED_FILE)
                     return False
                 else:
                     print("Archive tested successfully")
@@ -233,9 +245,9 @@ class CS_Utils:
 
             # Decompress file to temp
             if not self.decompress_to_temp(self.SUBMITTED_FILE):
-                self.FAILED_LIST = "Failed to decompress: " + self.SUBMITTED_FILE
+                self.logfile.log_error("Failed to decompress: " + self.SUBMITTED_FILE)
                 print('Failed to decompress: ' + self.SUBMITTED_FILE)
-                return self.FAILED_LIST
+                return
             else:
                 print('Good decompress')
 
@@ -290,11 +302,11 @@ class CS_Utils:
                 filename = Path(filename).stem  # Removes path, leaving extensionless filename
 
                 if ext.lower() in self.IMAGECONV:                       # if its an image to convert and its not a jpg
-                    if filename + '.jpg' in files:                              # if the converted filename exists
+                    if filename + '.jpg' in files:                      # if the converted filename exists
                         newfilename = self.find_new_filename(self.TEMPDIR, filename + '.jpg')   # generate new fn
                         csimage.convert_to_jpg(os.path.join(self.TEMPDIR, file),
                                                os.path.join(self.TEMPDIR, newfilename))     # input, output
-                        os.unlink(os.path.join(self.TEMPDIR, file))                                       # delete original
+                        os.unlink(os.path.join(self.TEMPDIR, file))                         # delete original
                     else:
                         csimage.convert_to_jpg(os.path.join(self.TEMPDIR, file), filename + '.jpg')  # input, output
 
@@ -327,14 +339,14 @@ class CS_Utils:
 
             if len(page_list) == 0:
                 print("No pages in comic")
-                self.FAILED_LIST = "No pages in comic"
-                return self.FAILED_LIST
+                self.logfile.log_error("No pages in comic: " + str(files))
+                return
 
             """ BUILD PPTX """
             # TODO: Bigger font on bigger inches
             prs = csimage.make_presentation(width, height)
             for page in page_list:
-                prs = csimage.add_slide(prs, os.path.join(self.TEMPDIR, page))
+                prs = csimage.add_slide(prs)
                 if page == page_list[0]:                                    # if current page is the cover
                     if self.XML_FILE is not None:                           # if an XML file was found
                         prs = csimage.add_xml_slide(prs, xml_dict)          # Create Main Metadata page
@@ -345,6 +357,4 @@ class CS_Utils:
             """ SAVE PPTX """
             new_pptx_folder_and_filename = self.new_file_path(self.SUBMITTED_FILE)
             csimage.save_pptx(prs, new_pptx_folder_and_filename)
-            return self.FAILED_LIST
-
-
+            return

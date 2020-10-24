@@ -1,0 +1,1 @@
+python Comic_Slider_OO.py --filename "temp_in\\Marvel Zombies Return V2009 #4 (of 5) (2010).cbz" --outputfolder "temp_out\\"

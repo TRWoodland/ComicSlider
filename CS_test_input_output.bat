@@ -1,0 +1,1 @@
+python Comic_Slider_OO.py --sourcefolder "temp_in\\" --outputfolder "temp_out\\"

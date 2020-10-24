@@ -3,17 +3,16 @@ import time
 from PIL import Image
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RGBColor, ColorFormat
+from pptx.dml.color import RGBColor  # ColorFormat
 import warnings
-
 # from pptx.enum.dml import MSO_COLOR_TYPE # MSO_THEME_COLOR
 # import codecs
-
 # 1px =~ 9525EMU
+
 
 class CS_Image:
     def __init__(self, SUBMITTED_FILE="", TEMPDIR=""):
-        self.SUBMITTED_FILE = SUBMITTED_FILE # full path and file
+        self.SUBMITTED_FILE = SUBMITTED_FILE  # full path and file
         self.TEMPDIR = TEMPDIR
 
         # Some image EXIF data causes errors. This hides that warning.
@@ -24,7 +23,7 @@ class CS_Image:
     """Convert images to jpg"""
     def convert_to_jpg(self, file, output_file=""):  # remember to pass TEMPDIR + FILE
         if output_file == "":
-            output_file == file
+            output_file = file
             print("File is " + file)
         comicPage = Image.open(file)
         print("outputFile is " + output_file)
@@ -46,7 +45,7 @@ class CS_Image:
             comicPage = comicPage.rotate(270, expand=True)
             # crop the rotated image to the size of the original image
             comicPage.save(file, dpi=(300, 300), quality=95)
-            width, height = comicPage.size
+            # width, height = comicPage.size
             # print(width, height)
             comicPage.close()
 
@@ -64,7 +63,7 @@ class CS_Image:
         comicPage = Image.open(file)
         width, height = 0, 0
         try:
-            if comicPage.info['dpi'] != None:
+            if comicPage.info['dpi'] is not None:
                 width, height = comicPage.size
                 width = width / comicPage.info['dpi'][0]  # gives inches
                 height = height / comicPage.info['dpi'][0]  # gives inches
@@ -82,16 +81,16 @@ class CS_Image:
         prs.slide_height = Inches(height)
         return prs
 
-    def add_slide(self, prs, file):
+    def add_slide(self, prs):
         blank_slide_layout = prs.slide_layouts[6]
         slide = prs.slides.add_slide(blank_slide_layout)
         background = slide.background
         fill = background.fill
         fill.solid()
         fill.fore_color.rgb = RGBColor(0, 0, 0)
-        top = 0
-        left = 0
-        pic = slide.shapes.add_picture(file, left, top, width=prs.slide_width, height=prs.slide_height)
+        # top = 0
+        # left = 0
+        # pic = slide.shapes.add_picture(file, left, top, width=prs.slide_width, height=prs.slide_height)
         return prs
 
     def add_xml_slide(self, prs, xml_dict):
@@ -136,7 +135,7 @@ class CS_Image:
 
     def save_pptx(self, prs, new_pptx_folder_and_filename):
 
-        if os.path.isfile(new_pptx_folder_and_filename) == True:
+        if os.path.isfile(new_pptx_folder_and_filename):
             print('Old file found. Deleting: ' + new_pptx_folder_and_filename)
             os.unlink(new_pptx_folder_and_filename)
             time.sleep(2)
