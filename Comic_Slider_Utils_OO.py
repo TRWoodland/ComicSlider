@@ -17,17 +17,17 @@ class CS_Utils:
         self.OUTPUTDIR = OUTPUTDIR
         self.AWS = AWS
 
-        self.OTHEREXT = ['.xml', 'txt', 'text']  # if I decide to make a page of text files
         self.OTHEREXT = ['.xml']
-        self.IMAGEEXT = ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tif', '.tiff']
-        self.IMAGECONV = ['.gif', '.png', '.bmp', '.tif', '.tiff']
-        self.ALLOWEDEXT = self.IMAGEEXT + self.OTHEREXT
-        self.SHITLIST = ['zThe-Hand.jpg']
+        self.IMAGEEXT = ['.jpg', '.jpeg', '.gif', '.png', '.bmp', '.tif', '.tiff']  # image files
+        self.IMAGECONV = ['.gif', '.png', '.bmp', '.tif', '.tiff']                  # to convert
+        self.ALLOWEDEXT = self.IMAGEEXT + self.OTHEREXT                             # allowed extensions
+        self.SHITLIST = ['zThe-Hand.jpg']                                           # pages I don't want
         self.XML_FILE = None
 
-        self.COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']
-        self.EXAMINERLIST = ['.mp4', '.mpg', '.avi', '.mov', '.flv', '.mpeg', '.mp3', '.mpa', '.doc', '.docx', '.wav',
-                             '.flac', '.ogg', '.zip', '.rar', '.cbr', '.cbz', '.7z', '.pdf']
+        self.COMICEXT = ['.cbz', '.cbr', '.rar', '.zip']                            # comic extensions
+        # Files to check for. Not implemented yet.
+        # self.EXAMINERLIST = ['.mp4', '.mpg', '.avi', '.mov', '.flv', '.mpeg', '.mp3', '.mpa', '.doc', '.docx', '.wav',
+        #                      '.flac', '.ogg', '.zip', '.rar', '.cbr', '.cbz', '.7z', '.pdf']
 
         # Generate TEMPDIR. FOLDER IS EMPTIED WHEN PROCESS COMPLETED!
         if not os.path.exists(os.path.join(tempfile.gettempdir(), 'ComicSliderTemp')):  # if folder doesn't exist
@@ -70,7 +70,8 @@ class CS_Utils:
             print("Found OUTPUTDIR: " + str(self.OUTPUTDIR))
 
         """ END OF INIT """
-    def __repr__(self):
+
+    def __repr__(self):     # Just prints what the objects variables are
         return f"CS_Utils obj opperating on: {self.SUBMITTED_FILE}," \
                f"\n Source folder: {self.SOURCEDIR}" \
                f"\n Output folder: {self.OUTPUTDIR}" \
@@ -94,9 +95,9 @@ class CS_Utils:
                         print('Too quick to remake folder')
                         time.sleep(1)
 
-    def is_comic(self, file):  # is file a comic
+    def is_comic(self, file):                   # is file a comic
         filename, ext = os.path.splitext(file)  # path\file and .ext
-        # filename = Path(filename).stem  # Removes path, leaving extensionless filename
+        # filename = Path(filename).stem        # Removes path, leaving extensionless filename
         if ext.lower() in self.COMICEXT:
             print('Is Comic: ' + file)
             return True
@@ -221,6 +222,8 @@ class CS_Utils:
             print("Deleting subdir: " + os.path.join(self.TEMPDIR, dirname))
             shutil.rmtree(os.path.join(self.TEMPDIR, dirname))
 
+    """ PROCESS STARTING """
+
     def start_the_process(self):
         self.logfile = CS_Logfile()  # Logger!
 
@@ -291,9 +294,10 @@ class CS_Utils:
                     summary_dict = {}                               # Separate the Summary
                     if 'Summary' in xml_dict:
                         summary_dict['Summary'] = xml_dict['Summary']
-                        del xml_dict['Summary']
+                        del xml_dict['Summary']                     # remove summary from xml_dict
 
             """ IMAGE CONVERSION """
+
             files = next(os.walk(self.TEMPDIR))[2]  # update files list
             csimage = CS_Image(TEMPDIR=self.TEMPDIR)  # image tools
 

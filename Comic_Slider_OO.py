@@ -92,7 +92,7 @@ if args.filename is None and args.sourcefolder is None:  # if arg not given, do 
     exit()
 
 """ # TODO: """
-
+# TODO: RETURN COMPLETED STATUS and LIST
 # TODO: How to better implement the logger module. How to pass between objects?
 # TODO: Add check for "File Already Exists" before process starts. Add Ignore.  Overwrite. Overwrite All. Ignore All.
 # TODO: Code Review!
