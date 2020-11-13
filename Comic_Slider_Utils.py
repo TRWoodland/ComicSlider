@@ -5,8 +5,8 @@ import tempfile
 import patoolib
 import xmltodict
 from pathlib import Path
-from Comic_Slider_Image_OO import CS_Image
-from Comic_Slider_Logger_OO import CS_Logfile
+from Comic_Slider_Image import CS_Image
+from Comic_Slider_Logger import CS_Logfile
 
 
 class CS_Utils:

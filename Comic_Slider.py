@@ -1,7 +1,7 @@
 import os
 import argparse  # allows input by commandline
-from Comic_Slider_Utils_OO import CS_Utils
-from Comic_Slider_Logger_OO import CS_Logfile
+from Comic_Slider_Utils import CS_Utils
+from Comic_Slider_Logger import CS_Logfile
 
 failed_list = []
 

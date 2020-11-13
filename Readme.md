@@ -1,7 +1,8 @@
-Hi,
+# React Tilt ComicSlider
+Store comics online, search by
 I've recently rewritten the entire project using Classes so its all object orientated.
 
-Comic_Slider_OO.py
+Comic_Slider.py
 This is the main entry where you run:
 
 python Comic_Slider_OO.py --filename "somecomic.cbz" --sourcefolder "somefolder" --outputfolder "somefolder"
@@ -18,7 +19,9 @@ Comic_Slider_Logger_OO.py
 I'd like a better way, or to know the standard way of using Logger objects
 
 To launch
-python Comic_Slider_OO.py --filename "somecomic.cbz" --sourcefolder "somefolder" --outputfolder "somefolder"
+python Comic_Slider_OO.py --filename "somecomic.cbz" --outputfolder "somefolder"
+or
+python Comic_Slider_OO.py --sourcefolder "somefolder" --outputfolder "somefolder"
 
 
 
