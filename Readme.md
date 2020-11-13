@@ -1,27 +1,54 @@
-# React Tilt ComicSlider
-Store comics online, search by
-I've recently rewritten the entire project using Classes so its all object orientated.
+![](static/CSLogo.jpg)
+# ComicSlider
+A new file conversion which allows you to read, store them online and search by writer, artist, year, plot, characters whilst 'not' counting towards cloud storage cost forever 
 
-Comic_Slider.py
-This is the main entry where you run:
+[(unless uploaded after June 1st 2021)](https://blog.google/products/photos/storage-policy-update#:~:text=You%20can%20learn%20more%20about,storage%20provided%20through%20Google%20One.)
 
-python Comic_Slider_OO.py --filename "somecomic.cbz" --sourcefolder "somefolder" --outputfolder "somefolder"
 
-There are 3 test.bat files testing each combination.
+## Features
 
-Comic_Slider_Utils_OO.py
+- Supports CBZ and CBR files
+- Supports any data in XML files
+- Will recreate entire folder structures and iterate over files
+- Summary gets it own page because sometimes its huge
+- [Web version (limited to 8mb files and doesn't have XML support yet)](http://cbz-to-pptx.com/)
+
+## Limitations
+
+- PPTX pages are all the same size and orientation. Nothing can be done about that.
+- The project is only useful until June 1st 2021 
+
+
+## Future plans
+
+- make exe version
+- RAR, CBR format has some proprietary problems. Might come back to that.
+- [Update website version to include XML formatting](http://cbz-to-pptx.com/)
+- Create GUI
+
+
+## How to run
+
+assuming you have Python 3.* installed
+
+```
+python Comic_Slider.py --filename "somecomic.cbz"  --outputfolder "somefolder"
+```
+
+or
+```
+python Comic_Slider.py --sourcefolder "somefolder"  --outputfolder "somefolder"
+```
+
+`Comic_Slider.py`
+Main file 
+
+`Comic_Slider_Utils.py`
 Is mostly file management.
 
-Comic_Slider_Image_OO.py
+`Comic_Slider_Image.py`
 Image and PPTX slide generation
 
-Comic_Slider_Logger_OO.py
-I'd like a better way, or to know the standard way of using Logger objects
-
-To launch
-python Comic_Slider_OO.py --filename "somecomic.cbz" --outputfolder "somefolder"
-or
-python Comic_Slider_OO.py --sourcefolder "somefolder" --outputfolder "somefolder"
 
 
 
